@@ -1,0 +1,21 @@
+[project]
+name = "man-pac"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "kimsitos", email = "kimsitos15@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "mazegenerator",
+    "pydantic>=2.13.5",
+]
+
+
+[build-system]
+requires = ["uv_build>=0.12.17,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+mazegenerator = { path = "lib/mazegenerator-2.1.0-py3-none-any.whl" }
