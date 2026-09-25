@@ -3,20 +3,18 @@ from random import randint
 from src.man_pac import main
 from src.render import Render
 
-labernto = MazeGenerator()
+labernto = MazeGenerator(seed=7)
 
-labernto.generate()
-
+for row in labernto.maze:
+    print(row)
 import pygame
 
 # pygame setup
 pygame.init()
-screen = pygame.display.set_mode((2000, 1000))
+screen = pygame.display.set_mode((1280, 1000))
 clock = pygame.time.Clock()
 running = True
-render = Render()
-for row in labernto.maze:
-    print(row)
+render = Render(labernto.maze)
 while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -26,7 +24,7 @@ while running:
 
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("purple")
-    screen.blit(render.maze_draw(labernto.maze))
+    screen.blit(render.get_maze_surface())
 
     # RENDER YOUR GAME HERE
 

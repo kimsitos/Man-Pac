@@ -1,27 +1,47 @@
-from src import Surface, draw
+from pygame import Rect, Surface, draw
 
 
 class Render():
     cell_size = 50
-    wall_color = (255,255,255)
-    #wall_wi
+    wall_color = (255, 255, 255)
+    margin = 8
+
+    def __init__(self, maze: list[list[int]]):
+        self._maze_surface = self.maze_draw(maze)
+
+    def get_maze_surface(self):
+        return self._maze_surface
+
     def maze_draw(self, maze: list[list[int]]) -> Surface:
         N, O, S, E = 8, 4, 2, 1
 
         surface_maze = Surface(
-            (8 * 2 + len(maze) * self.cell_size, 8 * 2 + len(maze[0]) * self.cell_size)
+            (self.margin * 2 + len(maze) * self.cell_size,
+             self.margin * 2 + len(maze[0]) * self.cell_size)
             )
         surface_maze.fill("black")
-        for y in range(0, len(maze)):
-            for x in range(0, len(maze[y])):
+        for x in range(0, len(maze)):
+            for y in range(0, len(maze[x])):
                 value = maze[x][y]
+
+                if value == 15:
+                    draw.rect(
+                        surface_maze,
+                        "cyan",
+                        Rect(
+                            self._board_to_pixel(x, y),
+                            (self.cell_size, self.cell_size)
+                        )
+                    )
 
                 if value & E:
                     draw.line(
                         surface_maze,
                         self.wall_color,
                         self._board_to_pixel(x, y),
-                        self._board_to_pixel(x, y + 1))
+                        self._board_to_pixel(x, y + 1)
+                    )
+
                 if value & N:
                     draw.line(
                         surface_maze,
@@ -45,8 +65,10 @@ class Render():
                     )
 
         return surface_maze
-    
+
     def _board_to_pixel(self, x: int, y: int) -> tuple[int, int]:
-        return (8 + x * self.cell_size, 8 + y * self.cell_size)
+        return (
+            self.margin + y * self.cell_size,
+            self.margin + x * self.cell_size)
     
 
