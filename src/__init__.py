@@ -1,3 +1,4 @@
-from pygame import Surface
+from pygame import Surface, draw
 from pydantic import BaseModel
-all = ["Surface"]
+
+all = ["Surface", "draw"]
