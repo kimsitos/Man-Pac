@@ -10,11 +10,10 @@ def main():
     labernto = MazeGenerator()
     for row in labernto.maze:
         print(row)
-    
-        
+
     man_pac = Entity(
-        coord_x=0,
-        coord_y=0,
+        coord_x=250,
+        coord_y=200,
         img_path="assets/Man-Pac.png"
     )
     # pygame setup
@@ -31,9 +30,9 @@ def main():
                 running = False
 
         # fill the screen with a color to wipe away anything from last frame
+        render.draw_sprite(man_pac)
         screen.fill("purple")
         screen.blit(render.get_maze_surface())
-        screen.blit(man_pac.get_sprite(), man_pac.get_coord())
 
         # RENDER YOUR GAME HERE
         

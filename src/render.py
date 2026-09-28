@@ -1,5 +1,5 @@
 from pygame import Rect, Surface, draw
-from src.entity import Entity
+from src.sprite import Sprite
 
 
 class Render():
@@ -10,12 +10,15 @@ class Render():
 
     def __init__(self, maze: list[list[int]]):
         self._maze_surface = self._draw_maze(maze)
+    
+    def create_maze_window(self, maze: list[list[int]]):
+        ...
 
-    def draw_entity(self, entity: Entity) -> None:
-        y, x = entity.get_coord()
+    def draw_sprite(self, sprite: Sprite) -> None:
+        y, x = sprite.get_coord()
         y += self.wall_width + self.margin
         x += self.wall_width + self.margin
-        self._maze_surface.blit(entity.get_sprite(), (y, x))
+        self._maze_surface.blit(sprite.get_sprite(), (y, x))
 
     def get_maze_surface(self) -> Surface:
         """
