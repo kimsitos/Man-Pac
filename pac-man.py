@@ -2,35 +2,53 @@ from mazegenerator import MazeGenerator
 from random import randint
 from src.man_pac import main
 from src.render import Render
-
-labernto = MazeGenerator(seed=7)
-
-for row in labernto.maze:
-    print(row)
+from src.menu import Menu 
+from src.entity import Entity
 import pygame
 
-# pygame setup
-pygame.init()
-screen = pygame.display.set_mode((1280, 1000))
-clock = pygame.time.Clock()
-running = True
-render = Render(labernto.maze)
-while running:
-    # poll for events
-    # pygame.QUIT event means the user clicked X to close your window
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+def main():
+    labernto = MazeGenerator()
+    for row in labernto.maze:
+        print(row)
 
-    # fill the screen with a color to wipe away anything from last frame
-    screen.fill("purple")
-    screen.blit(render.get_maze_surface())
+    man_pac = Entity(
+        coord_x=250,
+        coord_y=200,
+        img_path="assets/Man-Pac.png"
+    )
+    # pygame setup
+    pygame.init()
+    screen = pygame.display.set_mode((1280, 1000))
+    clock = pygame.time.Clock()
+    running = True
+    render = Render(labernto.maze)
+    while running:
+        # poll for events
+        # pygame.QUIT event means the user clicked X to close your window
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
-    # RENDER YOUR GAME HERE
+        # fill the screen with a color to wipe away anything from last frame
+        render.draw_sprite(man_pac)
+        screen.fill("purple")
+        screen.blit(render.get_maze_surface())
 
-    # flip() the display to put your work on screen
-    pygame.display.flip()
+        # RENDER YOUR GAME HERE
+        
 
-    clock.tick(60)  # limits FPS to 60
+        # flip() the display to put your work on screen
+        pygame.display.flip()
 
-pygame.quit()
+        clock.tick(60)  # limits FPS to 60
+
+    pygame.quit()
+
+if __name__ == "__main__":
+    from src.scheduler import GameScheduler
+    GameScheduler().run()
+    
+    #main()
+    #menu = Menu()
+    #menu.render_menu()
+
