@@ -15,4 +15,4 @@ class Move(Enum):
 
 class Entity(Sprite):
     #state: Enum
-    movement: Move = "LEFT"
+    movement: Move = Move.LEFT
