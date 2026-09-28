@@ -21,19 +21,6 @@ class GameScheduler:
         )
         self.render = Render()
 
-    def generate_maze(self) -> list[list[int]]:
-        """
-        Generate a maze with the mazegen library
-
-        Returns
-        -------
-        list[list[int]]
-            Maze grid. Each cell is a 4-bit mask (from 0 to 15)
-            where each bit represents a wall
-        """
-        self.mazegen.generate()
-        return self.mazegen.maze
-
     def run(self) -> None:
         """
         Run the game
@@ -46,6 +33,8 @@ class GameScheduler:
 
             self.render.clear_screen()
             self._draw()
+            # For debug
+            self.man_pac.move()
 
         pygame.quit()
 
@@ -62,3 +51,16 @@ class GameScheduler:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+
+    def generate_maze(self) -> list[list[int]]:
+        """
+        Generate a maze with the mazegen library
+
+        Returns
+        -------
+        list[list[int]]
+            Maze grid. Each cell is a 4-bit mask (from 0 to 15)
+            where each bit represents a wall
+        """
+        self.mazegen.generate()
+        return self.mazegen.maze

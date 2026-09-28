@@ -6,7 +6,7 @@ from typing import Any
 import pygame
 
 
-class Move(Enum):
+class Movement(Enum):
     UP = "UP"
     DOWN = "DOWN"
     LEFT = "LEFT"
@@ -14,5 +14,15 @@ class Move(Enum):
 
 
 class Entity(Sprite):
-    #state: Enum
-    movement: Move = Move.LEFT
+    velocity: int = 5
+    movement: Movement = Movement.RIGHT
+
+    def move(self) -> None:
+        if self.movement == Movement.LEFT:
+            self.coord_y += self.velocity
+        if self.movement == Movement.DOWN:
+            self.coord_x += self.velocity
+        if self.movement == Movement.RIGHT:
+            self.coord_y -= self.velocity
+        if self.movement == Movement.UP:
+            self.coord_x -= self.velocity
