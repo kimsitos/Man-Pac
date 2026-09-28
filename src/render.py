@@ -1,13 +1,21 @@
 from pygame import Rect, Surface, draw
+from src.entity import Entity
 
 
 class Render():
     cell_size = 50
     wall_color = (255, 255, 255)
+    wall_width = 2
     margin = 8
 
     def __init__(self, maze: list[list[int]]):
-        self._maze_surface = self._maze_draw(maze)
+        self._maze_surface = self._draw_maze(maze)
+
+    def draw_entity(self, entity: Entity) -> None:
+        y, x = entity.get_coord()
+        y += self.wall_width + self.margin
+        x += self.wall_width + self.margin
+        self._maze_surface.blit(entity.get_sprite(), (y, x))
 
     def get_maze_surface(self) -> Surface:
         """
@@ -20,7 +28,7 @@ class Render():
         """
         return self._maze_surface
 
-    def _maze_draw(self, maze: list[list[int]]) -> Surface:
+    def _draw_maze(self, maze: list[list[int]]) -> Surface:
         """
         Create the surface where the drawn maze is
 
@@ -61,7 +69,8 @@ class Render():
                         surface_maze,
                         self.wall_color,
                         self._board_to_pixel(x, y),
-                        self._board_to_pixel(x, y + 1)
+                        self._board_to_pixel(x, y + 1),
+                        self.wall_width
                     )
 
                 if value & N:
@@ -69,21 +78,24 @@ class Render():
                         surface_maze,
                         self.wall_color,
                         self._board_to_pixel(x, y),
-                        self._board_to_pixel(x+1, y)
+                        self._board_to_pixel(x+1, y),
+                        self.wall_width
                     )
                 if value & S:
                     draw.line(
                         surface_maze,
                         self.wall_color,
                         self._board_to_pixel(x, y + 1),
-                        self._board_to_pixel(x+1, y + 1)
+                        self._board_to_pixel(x+1, y + 1),
+                        self.wall_width
                     )
                 if value & O:
                     draw.line(
                         surface_maze,
                         self.wall_color,
                         self._board_to_pixel(x + 1, y),
-                        self._board_to_pixel(x + 1, y + 1)
+                        self._board_to_pixel(x + 1, y + 1),
+                        self.wall_width
                     )
 
         return surface_maze
