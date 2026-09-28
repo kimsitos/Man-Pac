@@ -10,16 +10,30 @@ class Render():
     wall_width = 2
     margin = 8
 
-    def __init__(self, maze: list[list[int]]):
+    def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((
-            len(maze) * self.cell_size + self.margin * 2,
-            len(maze[0]) * self.cell_size + self.margin * 2
-            ))
+        self.screen = pygame.display.set_mode((1200, 1000))
         self.clock = pygame.time.Clock()
-        self._maze_surface = self._draw_maze(maze)
+        self._maze_surface = None
 
     def render_maze(self, maze: list[list[int]], pac_man: Entity) -> None:
+        """
+        Render the maze once along with the character and ghosts
+
+        Parameters
+        ----------
+        maze : list[list[int]]
+            Maze grid. Each cell is a 4-bit mask (from 0 to 15)
+            where each bit represents a wall
+        pac_man : Entity
+            player character
+        """
+        if not self._maze_surface:
+            self._maze_surface = self._draw_maze(maze)
+            self.screen = pygame.display.set_mode((
+                len(maze) * self.cell_size + self.margin * 2,
+                len(maze[0]) * self.cell_size + self.margin * 2
+            ))
 
         self.screen.blit(self._maze_surface)
         self.draw_sprite(pac_man)
@@ -34,9 +48,21 @@ class Render():
         ...
 
     def clear_screen(self) -> None:
+        """
+        Fill the screen with a single color.
+        Seek to delete everything from the previous frame
+        """
         self.screen.fill("purple")
 
     def draw_sprite(self, sprite: Sprite) -> None:
+        """Draw the sprite on the screen
+
+        Parameters
+        ----------
+        sprite : Sprite
+            class that contains a surface with the image to be
+            illustrated and the coordinates where it can be taught
+        """
         y, x = sprite.get_coord()
         y += self.wall_width + self.margin
         x += self.wall_width + self.margin
