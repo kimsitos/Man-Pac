@@ -5,10 +5,14 @@ from src.entity import Entity
 
 
 class GameScheduler:
+    mazegen = MazeGenerator()
+
+    def generate_maze(self) -> list[list[int]]:
+        return self.mazegen.generate_maze().maze
+
     def run(self):
         running = True
-        mazegen = MazeGenerator()
-        render = Render(mazegen.maze)
+        render = Render(self.generate_maze())
         man_pac = Entity(
             coord_x=250,
             coord_y=200,
@@ -24,6 +28,6 @@ class GameScheduler:
 
             render.clear_screen()
             if state == "GAME":
-                render.render_maze(mazegen.maze, man_pac)
+                render.render_maze(self.generate_maze(), man_pac)
 
         pygame.quit()
