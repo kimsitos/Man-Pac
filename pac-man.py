@@ -45,7 +45,10 @@ def main():
     pygame.quit()
 
 if __name__ == "__main__":
-    main()
+    from src.scheduler import GameScheduler
+    GameScheduler().run()
+    
+    #main()
     #menu = Menu()
     #menu.render_menu()
 

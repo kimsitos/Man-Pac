@@ -1,4 +1,6 @@
+import pygame
 from pygame import Rect, Surface, draw
+from src.entity import Entity
 from src.sprite import Sprite
 
 
@@ -9,16 +11,36 @@ class Render():
     margin = 8
 
     def __init__(self, maze: list[list[int]]):
+        pygame.init()
+        self.screen = pygame.display.set_mode((
+            len(maze) * self.cell_size + self.margin * 2,
+            len(maze[0]) * self.cell_size + self.margin * 2
+            ))
+        self.clock = pygame.time.Clock()
         self._maze_surface = self._draw_maze(maze)
-    
-    def create_maze_window(self, maze: list[list[int]]):
+
+    def render_maze(self, maze: list[list[int]], pac_man: Entity) -> None:
+
+        self.screen.blit(self._maze_surface)
+        self.draw_sprite(pac_man)
+
+        pygame.display.flip()
+        self.clock.tick(60)
+
+    def render_menu(self) -> None:
         ...
+
+    def render_leaderboard(self) -> None:
+        ...
+
+    def clear_screen(self) -> None:
+        self.screen.fill("purple")
 
     def draw_sprite(self, sprite: Sprite) -> None:
         y, x = sprite.get_coord()
         y += self.wall_width + self.margin
         x += self.wall_width + self.margin
-        self._maze_surface.blit(sprite.get_sprite(), (y, x))
+        self.screen.blit(sprite.get_sprite(), (y, x))
 
     def get_maze_surface(self) -> Surface:
         """
