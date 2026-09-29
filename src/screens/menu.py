@@ -92,7 +92,6 @@ class Menu(BaseModel):
                 screen.blit(texto, (180, 250))
             elif self.state == StateMachine.QUIT:
                 running = False
-                pygame.quit()
                 return
 
             pygame.display.flip()
@@ -110,3 +109,9 @@ def menu_run():
 
 if __name__ == "__main__":
     menu_run()
+
+
+state = {
+    "MENU PRINCIPAL": Menu
+    "GAME": Menu
+}

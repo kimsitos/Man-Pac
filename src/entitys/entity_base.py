@@ -1,9 +1,5 @@
-from src import BaseModel, Surface
-from src.sprite import Sprite
+from src.entitys.sprite import Sprite
 from enum import Enum
-from pathlib import Path
-from typing import Any
-import pygame
 
 
 class Movement(Enum):
@@ -15,7 +11,7 @@ class Movement(Enum):
 
 class Entity(Sprite):
     velocity: int = 5
-    movement: Movement = Movement.RIGHT
+    movement: Movement = Movement.LEFT
 
     def move(self) -> None:
         if self.movement == Movement.LEFT:

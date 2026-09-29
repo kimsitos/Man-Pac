@@ -3,7 +3,7 @@ from random import randint
 from src.man_pac import main
 from src.render import Render
 from src.menu import Menu 
-from src.entity import Entity
+from src.entitys.entity_base import Entity
 import pygame
 
 def main():

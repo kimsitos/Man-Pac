@@ -1,6 +1,6 @@
 import pygame
 from pygame import Rect, Surface, draw
-from src.entity import Entity
+from src.entitys.entity_base import Entity
 from src.sprite import Sprite
 
 

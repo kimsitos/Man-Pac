@@ -1,14 +1,13 @@
 from src.render import Render
 import pygame
 from mazegenerator import MazeGenerator
-from src.entity import Entity
+from src.entitys.entity_base import Entity
 from enum import Enum
 
 
-class State(Enum):
-    MENU = 1
-    GAME = 2
-    LEADERBOARD = 3
+state = {
+    "Menu": menu
+}
 
 
 class GameScheduler:
@@ -17,7 +16,7 @@ class GameScheduler:
         self.man_pac = Entity(
             coord_x=250,
             coord_y=200,
-            img_path="assets/Man-Pac.png"
+            img_path="assets/sprites/Man-Pac.png"
         )
         self.render = Render()
 
@@ -26,13 +25,14 @@ class GameScheduler:
         Run the game
         """
         self.running = True
-        self.state = State.GAME
+        self.state = state
         while self.running:
             # Event catching
             self._event_cacher()
 
             self.render.clear_screen()
-            self._draw()
+            self.state[estado].render
+            estado = self.state[estado].changescreen()
             # For debug
             self.man_pac.move()
 
@@ -44,7 +44,7 @@ class GameScheduler:
         """
         if self.state == State.MENU:
             self.render.render_menu()
-        if self.state == State.GAME:
+        elif self.state == State.GAME:
             self.render.render_maze(self.generate_maze(), self.man_pac)
 
     def _event_cacher(self) -> None:
@@ -64,3 +64,10 @@ class GameScheduler:
         """
         self.mazegen.generate()
         return self.mazegen.maze
+
+
+class Pantalla()
+    def event_cacher()
+
+    def clear_screen()
+    def render()
