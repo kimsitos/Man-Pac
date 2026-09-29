@@ -1,5 +1,5 @@
 import pygame
-from pygame import Surface, draw
+from pygame import Surface, draw, Rect
 from pydantic import BaseModel, Field
 
-all = ["BaseModel", "Field", "Surface", "pygame"]
+__all__ = ["BaseModel", "Field", "Surface", "pygame", "Rect"]

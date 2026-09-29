@@ -6,7 +6,7 @@ run:
 	$(UV_RUN) python3 pac-man.py config.json
 
 lint:
-	@$(UV_RUN) $(PY_M) flake8 . --exclude=.venv,llm_sdk,data
+	@$(UV_RUN) $(PY_M) flake8 . --exclude=.venv
 	@$(UV_RUN) mypy . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
 clean:

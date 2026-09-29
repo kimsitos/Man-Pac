@@ -4,8 +4,8 @@ from typing import Any
 
 
 class Sprite(BaseModel):
-    coord_x: int
-    coord_y: int
+    coord_x: int = 0
+    coord_y: int = 0
     img_path: Path
 
     def model_post_init(self, _: Any) -> None:

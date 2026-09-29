@@ -8,7 +8,9 @@ authors = [
 ]
 requires-python = ">=3.14"
 dependencies = [
+    "flake8>=7.4.1",
     "mazegenerator",
+    "mypy>=2.3.1",
     "pydantic>=2.13.5",
     "pygame-ce>=2.5.8",
 ]

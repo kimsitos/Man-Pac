@@ -109,9 +109,3 @@ def menu_run():
 
 if __name__ == "__main__":
     menu_run()
-
-
-state = {
-    "MENU PRINCIPAL": Menu
-    "GAME": Menu
-}

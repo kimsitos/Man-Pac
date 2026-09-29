@@ -1,7 +1,7 @@
 import pygame
 from pygame import Rect, Surface, draw
 from src.entitys.entity_base import Entity
-from src.sprite import Sprite
+from src.entitys.sprite import Sprite
 
 
 class Render():
@@ -13,7 +13,6 @@ class Render():
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((1200, 1000))
-        self.clock = pygame.time.Clock()
         self._maze_surface = None
 
     def render_maze(self, maze: list[list[int]], pac_man: Entity) -> None:
