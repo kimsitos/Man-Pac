@@ -1,6 +1,7 @@
-from src.entitys.entity_base import Entity
-from src.entitys.sprite import Sprite
+# from src.entitys.entity_base import Entity
+# from src.entitys.sprite import Sprite
 from src.screens.screen_base import ScreenBase
+from src.entitys.man_pac import Man_Pac
 from mazegenerator import MazeGenerator
 from src import Surface, draw, pygame, Rect
 
@@ -12,18 +13,33 @@ class MazeScreen(ScreenBase):
     margin = 8
 
     def __init__(self):
-        self.__maze_generator = MazeGenerator(seed=7)
+        self.__maze_generator = MazeGenerator()
         self._generate_new_maze()
+        self.pac_man = Man_Pac(
+            start_point=self._board_to_pixel(
+                    len(self.__maze) // 2,
+                    len(self.__maze[0]) // 2
+                )
+        )
 
     def event_cacher(self):
+        """
+        Processes keyboard events
+        """
         keys = pygame.key.get_pressed()
         if keys[pygame.K_m]:
             self._generate_new_maze()
 
     def render(self) -> None:
+        """
+        Renders the maze.
+        """
+        print(self.pac_man.get_coord())
         self.__screen.blit(self.__maze_surface, (0, 0))
+        self.__screen.blit(self.pac_man.get_sprite(), self.pac_man.get_coord())
 
     def clear_screen(self):
+
         self.__screen.fill("black")
 
     def change_screen(self):
@@ -82,6 +98,18 @@ class MazeScreen(ScreenBase):
         surface_maze: Surface,
         start: tuple[int, int],
             end: tuple[int, int]) -> None:
+        """
+        Draw a line on the given screen.
+
+        Parameters
+        ----------
+        surface_maze : Surface
+            Surface on which to draw the line
+        start : tuple[int, int]
+            Line start point
+        end : tuple[int, int]
+            Line end point
+        """
 
         draw.line(
             surface_maze,
@@ -109,11 +137,13 @@ class MazeScreen(ScreenBase):
             corresponding coordinates for the surface
         """
         return (
-            self.margin + y * self.cell_size,
-            self.margin + x * self.cell_size)
+            self.margin + (y * self.cell_size),
+            self.margin + (x * self.cell_size))
 
     def _generate_new_maze(self) -> None:
-        pygame.init()
+        """
+        Generate a screen with a new maze.
+        """
         print("Generating maze...")
         self.__maze_generator.generate()
         self.__maze = self.__maze_generator.maze
