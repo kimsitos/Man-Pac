@@ -15,17 +15,9 @@ class StateMachine(Enum):
 class Menu(ScreenBase):
     """Representa el menú principal."""
 
-    play_rect: Any = None
-    play_text: Any = None
-    high_score_rect: Any = None
-    high_score_text: Any = None
-    quit_text: Any = None
-    quit_rect: Any = None
     state: StateMachine = StateMachine.MENU
     width: ClassVar[int] = 1200
     height: ClassVar[int] = 1000
-    font: Any = None
-    screen: Any = None
 
     def __init__(self):
         self.screen = pygame.display.set_mode((self.width, self.height))

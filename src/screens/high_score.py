@@ -23,12 +23,11 @@ class Player(BaseModel):
 class High_score(ScreenBase):
     """pantalla de high score"""
     state = StateMachine.HIGH_SCORE
-    font: Any = None
-    menu_text: Any = None
-    menu_rect: Any = None
 
     def __init__(self):
-        self.font = pygame.font.Font(None, 100)
+        self.players = load_players("high_scores.json")
+        self.font = pygame.font.Font(None, 50)
+        self.title_font = pygame.font.Font(None, 80)
         self.menu_text = self.font.render("MENU", True, (255, 255, 255))
         self.menu_rect = self.menu_text.get_rect(center=(1200 // 2, 930))
         self.screen = pygame.display.set_mode((1200, 1000))
@@ -56,6 +55,29 @@ class High_score(ScreenBase):
             "Menu", self.menu_rect, (255, 255, 0), mouse_pos
         )
 
+    def render_high_scores(self):
+        title = self.title_font.render(
+            "TOP 10 SCORES",
+            True,
+            (255, 255, 0)
+        )
+
+        self.screen.blit(title, (350, 50))
+
+        start_y = 180
+
+        for index, player in enumerate(self.players):
+            text = self.font.render(
+                f"{index + 1}. {player.name:<10} {player.scored}",
+                True,
+                (255, 255, 255)
+            )
+
+            self.screen.blit(
+                text,
+                (250, start_y + index * 70)
+            )
+
     def _render_title(
         self,
         text: str,
@@ -81,6 +103,7 @@ class High_score(ScreenBase):
             self.clear_screen()
 
             if self.state == StateMachine.HIGH_SCORE:
+                self.render_high_scores()
                 self.change_color_title()
                 self.screen.blit(self.menu_text, self.menu_rect)
             elif self.state == StateMachine.MENU:
