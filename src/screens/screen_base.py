@@ -3,17 +3,17 @@ from abc import ABC, abstractmethod
 
 class ScreenBase(ABC):
     @abstractmethod
-    def event_cacher():
+    def event_cacher(self):
         ...
 
     @abstractmethod
-    def change_screen() -> str:
+    def change_screen(self) -> str:
         ...
 
     @abstractmethod
-    def render() -> None:
+    def render(self) -> None:
         ...
 
     @abstractmethod
-    def clear_screen() -> None:
+    def clear_screen(self) -> None:
         ...

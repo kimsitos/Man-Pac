@@ -1,17 +1,18 @@
-import pygame
 from enum import Enum
 from typing import Any, ClassVar
-from pydantic import BaseModel
+
+import pygame
+
+from src.screens.screen_base import ScreenBase
 
 
 class StateMachine(Enum):
     MENU = "MENU"
     PLAY = "PLAY"
-    QUIT = "QUIT"
     HIGH_SCORE = "HIGH_SCORE"
 
 
-class Menu(BaseModel):
+class Menu(ScreenBase):
     """Representa el menú principal."""
 
     play_rect: Any = None
@@ -24,9 +25,10 @@ class Menu(BaseModel):
     width: ClassVar[int] = 1200
     height: ClassVar[int] = 1000
     font: Any = None
+    screen: Any = None
 
-    def init_menu(self):
-
+    def __init__(self):
+        self.screen = pygame.display.set_mode((self.width, self.height))
         self.font = pygame.font.Font(None, 100)
         self.play_text = self.font.render("JUGAR", True, (255, 255, 255))
         self.play_rect = self.play_text.get_rect(center=(self.width // 2, 300))
@@ -37,61 +39,71 @@ class Menu(BaseModel):
         self.quit_text = self.font.render("QUIT", True, (255, 255, 255))
         self.quit_rect = self.quit_text.get_rect(center=(self.width // 2, 700))
 
+    def event_cacher(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+            if self.state == StateMachine.MENU:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.play_rect.collidepoint(event.pos):
+                        self.state = StateMachine.PLAY
+                    if self.high_score_rect.collidepoint(event.pos):
+                        self.state = StateMachine.HIGH_SCORE
+                    if self.quit_rect.collidepoint(event.pos):
+                        return False
+        return True
+
+    def change_screen(self) -> str:
+        return self.state
+
+    def clear_screen(self) -> None:
+        self.screen.fill((0, 0, 0))
+
     def change_color_title(self):
-        # Cambiar color si el ratón está encima
-        if self.play_rect.collidepoint(pygame.mouse.get_pos()):
-            self.play_text = self.font.render("JUGAR", True, (255, 255, 0))
-        else:
-            self.play_text = self.font.render("JUGAR", True, (255, 255, 255))
+        mouse_pos = pygame.mouse.get_pos()
+        self.play_text = self._render_title(
+            "JUGAR", self.play_rect, (255, 255, 0), mouse_pos
+        )
+        self.high_score_text = self._render_title(
+            "HIGH SCORE", self.high_score_rect, (255, 255, 0), mouse_pos
+        )
+        self.quit_text = self._render_title(
+            "QUIT", self.quit_rect, (255, 0, 0), mouse_pos
+        )
 
-        if self.high_score_rect.collidepoint(pygame.mouse.get_pos()):
-            self.high_score_text = self.font.render(
-                "HIGH SCORE", True, (255, 255, 0))
-        else:
-            self.high_score_text = self.font.render(
-                "HIGH SCORE", True, (255, 255, 255))
+    def _render_title(
+        self,
+        text: str,
+        rect: Any,
+        hover_color: tuple[int, int, int],
+        mouse_pos: tuple[int, int],
+    ) -> Any:
+        color = (
+            hover_color
+            if rect.collidepoint(mouse_pos)
+            else (255, 255, 255)
+        )
+        return self.font.render(text, True, color)
 
-        if self.quit_rect.collidepoint(pygame.mouse.get_pos()):
-            self.quit_text = self.font.render("QUIT", True, (255, 0, 0))
-        else:
-            self.quit_text = self.font.render("QUIT", True, (255, 255, 255))
-
-    def menu_render(self):
-
-        screen = pygame.display.set_mode((self.width, self.height))
+    def render(self):
         clock = pygame.time.Clock()
         running = True
 
         while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                if self.state == StateMachine.MENU:
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        if self.play_rect.collidepoint(event.pos):
-                            self.state = StateMachine.PLAY
-                        if self.high_score_rect.collidepoint(event.pos):
-                            self.state = StateMachine.HIGH_SCORE
-                        if self.quit_rect.collidepoint(event.pos):
-                            self.state = StateMachine.QUIT
-
-            screen.fill((0, 0, 0))
+            running = self.event_cacher()
+            if not running:
+                break
+            self.clear_screen()
 
             if self.state == StateMachine.MENU:
                 self.change_color_title()
-                screen.blit(self.play_text, self.play_rect)
-                screen.blit(self.high_score_text, self.high_score_rect)
-                screen.blit(self.quit_text, self.quit_rect)
+                self.screen.blit(self.play_text, self.play_rect)
+                self.screen.blit(self.high_score_text, self.high_score_rect)
+                self.screen.blit(self.quit_text, self.quit_rect)
             elif self.state == StateMachine.PLAY:
-                texto = self.font.render("PACMAN INICIADO", True, (0, 255, 0))
-                screen.blit(texto, (180, 250))
+                self.change_screen()
             elif self.state == StateMachine.HIGH_SCORE:
-                texto = self.font.render(
-                    "HIGH SCORE INICIADO", True, (0, 255, 0))
-                screen.blit(texto, (180, 250))
-            elif self.state == StateMachine.QUIT:
-                running = False
-                return
+                self.change_screen()
 
             pygame.display.flip()
             clock.tick(60)
@@ -99,12 +111,7 @@ class Menu(BaseModel):
         pygame.quit()
 
 
-def menu_run():
+if __name__ == "__main__":
     pygame.init()
     menu = Menu()
-    menu.init_menu()
-    menu.menu_render()
-
-
-if __name__ == "__main__":
-    menu_run()
+    menu.render()
