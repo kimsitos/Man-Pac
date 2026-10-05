@@ -1,14 +1,13 @@
 import pygame
 from src.screens.menu import Menu
-from src.entitys.entity_base import Entity
-from src.screens.maze_game import MazeScreen
+from src.screens.game_screen import GameScreen
 
 
 class GameScheduler:
     def __init__(self) -> None:
-        pac_man = Entity(img_path="assets/sprites/Man-Pac.png")
         self.screens = {
-            "GAME": MazeScreen()
+            "GAME": GameScreen(
+            ),
         }
 
     def run(self) -> None:
