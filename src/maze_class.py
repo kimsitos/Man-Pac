@@ -10,6 +10,12 @@ class Maze:
     def __init__(self, seed: int = 0):
         self._seed = seed
         self._generator = MazeGenerator(seed=self._seed)
+        self._mask_walls = {
+            "North": 8,
+            "West": 4,
+            "South": 2,
+            "East": 1
+        }
         self._maze_screen = self._draw_maze(self._generator.maze)
 
     def generate_new_maze(self):
@@ -34,8 +40,6 @@ class Maze:
         Surface
             The surface where the labyrinth is drawn
         """
-        N, O, S, E = 8, 4, 2, 1
-
         surface_maze = pygame.Surface(
             (len(maze) * self.cell_size + 1,
              len(maze[0]) * self.cell_size + 1)
@@ -55,13 +59,13 @@ class Maze:
                         )
                     )
 
-                if value & E:
+                if value & self._mask_walls["East"]:
                     self._draw_wall(surface_maze, (x, y), (x, y+1))
-                if value & N:
+                if value & self._mask_walls["North"]:
                     self._draw_wall(surface_maze, (x, y), (x+1, y))
-                if value & S:
+                if value & self._mask_walls["South"]:
                     self._draw_wall(surface_maze, (x, y+1), (x+1, y+1))
-                if value & O:
+                if value & self._mask_walls["West"]:
                     self._draw_wall(surface_maze, (x+1, y), (x+1, y+1))
 
         return surface_maze

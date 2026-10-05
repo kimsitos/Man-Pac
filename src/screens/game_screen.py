@@ -18,8 +18,8 @@ class GameScreen(ScreenBase):
         )
         self._maze = Maze()
         self._screen = pygame.display.set_mode(
-            (self._maze.get_screen().get_size()
-        ))
+            (self._maze.get_screen().get_size())
+        )
 
     def event_cacher(self):
         """
@@ -29,8 +29,9 @@ class GameScreen(ScreenBase):
         if keys[pygame.K_m]:
             self._maze.generate_new_maze()
             self._screen = pygame.display.set_mode(
-                (self._maze.get_screen().get_size()
-            ))
+                (self._maze.get_screen().get_size())
+            )
+            self.entidad.return_to_start()
         self.entidad.update()
         self.entidad.move()
 
