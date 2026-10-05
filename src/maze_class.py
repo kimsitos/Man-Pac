@@ -1,52 +1,31 @@
-# from src.entitys.entity_base import Entity
-# from src.entitys.sprite import Sprite
-from src.screens.screen_base import ScreenBase
-from src.entitys.man_pac import Man_Pac
 from mazegenerator import MazeGenerator
-from src import Surface, draw, pygame, Rect
+import pygame
 
 
-class MazeScreen(ScreenBase):
+class Maze:
     cell_size = 50
     wall_color = (255, 255, 255)
     wall_width = 1
-    margin = 8
 
-    def __init__(self):
-        self.__maze_generator = MazeGenerator()
-        self._generate_new_maze()
-        self.pac_man = Man_Pac(
-            start_point=self._board_to_pixel(
-                    len(self.__maze) // 2,
-                    len(self.__maze[0]) // 2
-                )
-        )
+    def __init__(self, seed: int = 0):
+        self._seed = seed
+        self._generator = MazeGenerator(seed=self._seed)
+        self._mask_walls = {
+            "North": 8,
+            "West": 4,
+            "South": 2,
+            "East": 1
+        }
+        self._maze_screen = self._draw_maze(self._generator.maze)
 
-    def event_cacher(self):
-        """
-        Processes keyboard events
-        """
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_m]:
-            self._generate_new_maze()
+    def generate_new_maze(self):
+        self._generator.generate(self._seed)
+        self._maze_screen = self._draw_maze(self._generator.maze)
 
-    def render(self) -> None:
-        """
-        Renders the maze.
-        """
-        print(self.pac_man.get_coord())
-        self.__screen.blit(self.__maze_surface, (0, 0))
-        self.__screen.blit(self.pac_man.get_sprite(), self.pac_man.get_coord())
+    def get_screen(self) -> pygame.Surface:
+        return self._maze_screen
 
-    def clear_screen(self):
-
-        self.__screen.fill("black")
-
-    def change_screen(self):
-        ...
-
-    # Private functions
-    def _draw_maze(self, maze: list[list[int]]) -> Surface:
+    def _draw_maze(self, maze: list[list[int]]) -> pygame.Surface:
         """
         Create the surface where the drawn maze is
 
@@ -61,41 +40,39 @@ class MazeScreen(ScreenBase):
         Surface
             The surface where the labyrinth is drawn
         """
-        N, O, S, E = 8, 4, 2, 1
-
-        surface_maze = Surface(
-            (self.margin * 2 + len(maze) * self.cell_size,
-             self.margin * 2 + len(maze[0]) * self.cell_size)
-            )
+        surface_maze = pygame.Surface(
+            (len(maze) * self.cell_size + 1,
+             len(maze[0]) * self.cell_size + 1)
+        )
         surface_maze.fill("black")
         for x in range(0, len(maze)):
             for y in range(0, len(maze[x])):
                 value = maze[x][y]
 
                 if value == 15:
-                    draw.rect(
+                    pygame.draw.rect(
                         surface_maze,
                         "yellow",
-                        Rect(
+                        pygame.Rect(
                             self._board_to_pixel(x, y),
                             (self.cell_size, self.cell_size)
                         )
                     )
 
-                if value & E:
+                if value & self._mask_walls["East"]:
                     self._draw_wall(surface_maze, (x, y), (x, y+1))
-                if value & N:
+                if value & self._mask_walls["North"]:
                     self._draw_wall(surface_maze, (x, y), (x+1, y))
-                if value & S:
+                if value & self._mask_walls["South"]:
                     self._draw_wall(surface_maze, (x, y+1), (x+1, y+1))
-                if value & O:
+                if value & self._mask_walls["West"]:
                     self._draw_wall(surface_maze, (x+1, y), (x+1, y+1))
 
         return surface_maze
 
     def _draw_wall(
         self,
-        surface_maze: Surface,
+        surface_maze: pygame.Surface,
         start: tuple[int, int],
             end: tuple[int, int]) -> None:
         """
@@ -111,7 +88,7 @@ class MazeScreen(ScreenBase):
             Line end point
         """
 
-        draw.line(
+        pygame.draw.line(
             surface_maze,
             self.wall_color,
             self._board_to_pixel(*start),
@@ -137,19 +114,6 @@ class MazeScreen(ScreenBase):
             corresponding coordinates for the surface
         """
         return (
-            self.margin + (y * self.cell_size),
-            self.margin + (x * self.cell_size))
+            y * self.cell_size,
+            x * self.cell_size)
 
-    def _generate_new_maze(self) -> None:
-        """
-        Generate a screen with a new maze.
-        """
-        print("Generating maze...")
-        self.__maze_generator.generate()
-        self.__maze = self.__maze_generator.maze
-
-        self.__screen = pygame.display.set_mode((
-            len(self.__maze) * self.cell_size + self.margin * 2,
-            len(self.__maze[0]) * self.cell_size + self.margin * 2
-        ))
-        self.__maze_surface = self._draw_maze(self.__maze).convert()
