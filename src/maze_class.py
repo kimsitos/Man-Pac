@@ -11,12 +11,12 @@ class Maze:
         self._seed = seed
         self._generator = MazeGenerator(seed=self._seed)
         self._mask_walls = {
-            "North": 8,
-            "West": 4,
-            "South": 2,
-            "East": 1
+            "North": 1,
+            "West": 8,
+            "South": 4,
+            "East": 2
         }
-        self._maze_screen = self._draw_maze(self._generator.maze)
+        self._draw_maze(self._generator.maze)
 
     def generate_new_maze(self):
         self._generator.generate(self._seed)
@@ -25,7 +25,7 @@ class Maze:
     def get_screen(self) -> pygame.Surface:
         return self._maze_screen
 
-    def _draw_maze(self, maze: list[list[int]]) -> pygame.Surface:
+    def _draw_maze(self, maze: list[list[int]]) -> None:
         """
         Create the surface where the drawn maze is
 
@@ -34,47 +34,45 @@ class Maze:
         maze : list[list[int]]
             Maze grid. Each cell is a 4-bit mask (from 0 to 15)
             where each bit represents a wall
-
-        Returns
-        -------
-        Surface
-            The surface where the labyrinth is drawn
         """
-        surface_maze = pygame.Surface(
+        self._maze_screen = pygame.Surface(
             (len(maze) * self.cell_size + 1,
              len(maze[0]) * self.cell_size + 1)
         )
-        surface_maze.fill("black")
-        for x in range(0, len(maze)):
-            for y in range(0, len(maze[x])):
-                value = maze[x][y]
+        self._maze_screen.fill("black")
+        for y in range(0, len(maze)):
+            for x in range(0, len(maze[y])):
+                value = maze[y][x]
+
+                px = x * self.cell_size
+                py = y * self.cell_size
 
                 if value == 15:
                     pygame.draw.rect(
-                        surface_maze,
+                        self._maze_screen,
                         "yellow",
                         pygame.Rect(
-                            self._board_to_pixel(x, y),
+                            (px, py),
                             (self.cell_size, self.cell_size)
                         )
                     )
 
                 if value & self._mask_walls["East"]:
-                    self._draw_wall(surface_maze, (x, y), (x, y+1))
+                    self._draw_wall(
+                        (px + self.cell_size, py),
+                        (px + self.cell_size, py + self.cell_size)
+                    )
                 if value & self._mask_walls["North"]:
-                    self._draw_wall(surface_maze, (x, y), (x+1, y))
+                    self._draw_wall((px, py), (px + self.cell_size, py))
                 if value & self._mask_walls["South"]:
-                    self._draw_wall(surface_maze, (x, y+1), (x+1, y+1))
+                    self._draw_wall(
+                        (px, py + self.cell_size),
+                        (px + self.cell_size, py + self.cell_size)
+                    )
                 if value & self._mask_walls["West"]:
-                    self._draw_wall(surface_maze, (x+1, y), (x+1, y+1))
+                    self._draw_wall((px, py), (px, py + self.cell_size))
 
-        return surface_maze
-
-    def _draw_wall(
-        self,
-        surface_maze: pygame.Surface,
-        start: tuple[int, int],
-            end: tuple[int, int]) -> None:
+    def _draw_wall(self, start: tuple[int, int], end: tuple[int, int]) -> None:
         """
         Draw a line on the given screen.
 
@@ -89,31 +87,9 @@ class Maze:
         """
 
         pygame.draw.line(
-            surface_maze,
+            self._maze_screen,
             self.wall_color,
-            self._board_to_pixel(*start),
-            self._board_to_pixel(*end),
+            start,
+            end,
             self.wall_width
         )
-
-    def _board_to_pixel(self, x: int, y: int) -> tuple[int, int]:
-        """
-        Returns the position of the two-dimensional array to
-        the corresponding pixel
-
-        Parameters
-        ----------
-        x : int
-            x position of the two-dimensional array
-        y : int
-            y position of the two-dimensional array
-
-        Returns
-        -------
-        tuple[int, int]
-            corresponding coordinates for the surface
-        """
-        return (
-            y * self.cell_size,
-            x * self.cell_size)
-
