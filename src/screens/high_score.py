@@ -22,9 +22,9 @@ class Player(BaseModel):
 
 class High_score(ScreenBase):
     """pantalla de high score"""
-    state = StateMachine.HIGH_SCORE
 
     def __init__(self):
+        self.state = StateMachine.HIGH_SCORE
         self.players = load_players("high_scores.json")
         self.font = pygame.font.Font(None, 50)
         self.title_font = pygame.font.Font(None, 80)
@@ -42,8 +42,13 @@ class High_score(ScreenBase):
                         self.state = StateMachine.MENU
         return True
 
-    def change_screen(self) -> str:
-        return self.state
+    def change_screen(self):
+        if self.state == StateMachine.HIGH_SCORE:
+            return None
+
+        next_state = self.state.value
+        self.state = StateMachine.HIGH_SCORE
+        return next_state
 
     def clear_screen(self) -> None:
         self.screen.fill((0, 0, 0))
@@ -93,25 +98,12 @@ class High_score(ScreenBase):
         return self.font.render(text, True, color)
 
     def render(self):
-        clock = pygame.time.Clock()
-        running = True
+        self.clear_screen()
 
-        while running:
-            running = self.event_cacher()
-            if not running:
-                break
-            self.clear_screen()
-
-            if self.state == StateMachine.HIGH_SCORE:
-                self.render_high_scores()
-                self.change_color_title()
-                self.screen.blit(self.menu_text, self.menu_rect)
-            elif self.state == StateMachine.MENU:
-                self.change_screen()
-            pygame.display.flip()
-            clock.tick(60)
-
-        pygame.quit()
+        if self.state == StateMachine.HIGH_SCORE:
+            self.render_high_scores()
+            self.change_color_title()
+            self.screen.blit(self.menu_text, self.menu_rect)
 
 
 def new_record(new: Player):
@@ -191,9 +183,3 @@ def _write_json(players: list[Player]):
             indent=4,
             ensure_ascii=False,
         )
-
-
-if __name__ == "__main__":
-    pygame.init()
-    high = High_score()
-    high.render()

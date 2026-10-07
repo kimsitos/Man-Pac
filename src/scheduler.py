@@ -1,32 +1,43 @@
 import pygame
+from enum import Enum
+
 from src.screens.menu import Menu
 from src.screens.game_screen import GameScreen
+from src.screens.high_score import High_score
+
+
+class ScreenState(Enum):
+    MENU = "MENU"
+    PLAY = "PLAY"
+    HIGH_SCORE = "HIGH_SCORE"
 
 
 class GameScheduler:
-    def __init__(self) -> None:
+    def __init__(self):
+        pygame.init()
+        self.current_state = ScreenState.MENU.value
         self.screens = {
-            "GAME": GameScreen(
-            ),
+            ScreenState.MENU.value: Menu(),
+            ScreenState.PLAY.value: GameScreen(),
+            ScreenState.HIGH_SCORE.value: High_score(),
         }
-
-    def run(self) -> None:
-        """
-        Run the game
-        """
-        screen = "GAME"
-        clock = pygame.time.Clock()
         self.running = True
+
+    def run(self):
+        clock = pygame.time.Clock()
+
         while self.running:
-            # Event catching
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-            self.screens[screen].event_cacher()
+            screen = self.screens[self.current_state]
 
-            self.screens[screen].clear_screen()
-            self.screens[screen].render()
+            if not screen.event_cacher():
+                self.running = False
+                break
+            next_state = screen.change_screen()
+            if next_state is not None and next_state in self.screens:
+                self.current_state = next_state
+                screen = self.screens[self.current_state]
 
+            screen.render()
             pygame.display.flip()
             clock.tick(60)
 

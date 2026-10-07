@@ -1,4 +1,4 @@
-from src.entitys import PacMan
+from src.entitys.man_pac import PacMan
 # from src.entitys.sprite import Sprite
 from src.screens.screen_base import ScreenBase
 from src.maze_class import Maze
@@ -25,6 +25,10 @@ class GameScreen(ScreenBase):
         """
         Processes keyboard events
         """
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+
         keys = pygame.key.get_pressed()
         if keys[pygame.K_m]:
             self._maze.generate_new_maze()
@@ -34,11 +38,13 @@ class GameScreen(ScreenBase):
             self.entidad.return_to_start()
         self.entidad.update()
         self.entidad.move()
+        return True
 
     def render(self) -> None:
         """
         Renders the maze.
         """
+        self.clear_screen()
         self._screen.blit(self._maze.get_screen())
         self._screen.blit(self.entidad.get_sprite(), self.entidad.get_coord())
 
@@ -47,4 +53,4 @@ class GameScreen(ScreenBase):
         self._screen.fill("black")
 
     def change_screen(self):
-        ...
+        return None

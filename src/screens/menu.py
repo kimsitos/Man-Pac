@@ -15,11 +15,11 @@ class StateMachine(Enum):
 class Menu(ScreenBase):
     """Representa el menú principal."""
 
-    state: StateMachine = StateMachine.MENU
     width: ClassVar[int] = 1200
     height: ClassVar[int] = 1000
 
     def __init__(self):
+        self.state = StateMachine.MENU
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.font = pygame.font.Font(None, 100)
         self.play_text = self.font.render("JUGAR", True, (255, 255, 255))
@@ -39,14 +39,19 @@ class Menu(ScreenBase):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.play_rect.collidepoint(event.pos):
                         self.state = StateMachine.PLAY
-                    if self.high_score_rect.collidepoint(event.pos):
+                    elif self.high_score_rect.collidepoint(event.pos):
                         self.state = StateMachine.HIGH_SCORE
-                    if self.quit_rect.collidepoint(event.pos):
+                    elif self.quit_rect.collidepoint(event.pos):
                         return False
         return True
 
-    def change_screen(self) -> str:
-        return self.state
+    def change_screen(self):
+        if self.state == StateMachine.MENU:
+            return None
+
+        next_state = self.state.value
+        self.state = StateMachine.MENU
+        return next_state
 
     def clear_screen(self) -> None:
         self.screen.fill((0, 0, 0))
@@ -78,32 +83,10 @@ class Menu(ScreenBase):
         return self.font.render(text, True, color)
 
     def render(self):
-        clock = pygame.time.Clock()
-        running = True
+        self.clear_screen()
 
-        while running:
-            running = self.event_cacher()
-            if not running:
-                break
-            self.clear_screen()
-
-            if self.state == StateMachine.MENU:
-                self.change_color_title()
-                self.screen.blit(self.play_text, self.play_rect)
-                self.screen.blit(self.high_score_text, self.high_score_rect)
-                self.screen.blit(self.quit_text, self.quit_rect)
-            elif self.state == StateMachine.PLAY:
-                self.change_screen()
-            elif self.state == StateMachine.HIGH_SCORE:
-                self.change_screen()
-
-            pygame.display.flip()
-            clock.tick(60)
-
-        pygame.quit()
-
-
-if __name__ == "__main__":
-    pygame.init()
-    menu = Menu()
-    menu.render()
+        if self.state == StateMachine.MENU:
+            self.change_color_title()
+            self.screen.blit(self.play_text, self.play_rect)
+            self.screen.blit(self.high_score_text, self.high_score_rect)
+            self.screen.blit(self.quit_text, self.quit_rect)
