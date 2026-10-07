@@ -2,7 +2,7 @@ from src.entitys.man_pac import PacMan
 # from src.entitys.sprite import Sprite
 from src.screens.screen_base import ScreenBase
 from src.maze_class import Maze
-from src import Surface, draw, pygame, Rect
+from src import pygame
 
 
 class GameScreen(ScreenBase):
@@ -12,11 +12,12 @@ class GameScreen(ScreenBase):
     margin = 8
 
     def __init__(self):
+        self._maze = Maze()
         self.entidad = PacMan(
-            (100, 80),
+            (len(self._maze._generator.maze) // 2 * self._maze.cell_size,
+             len(self._maze._generator.maze[0]) // 2 * self._maze.cell_size),
             "assets/sprites/Man-Pac.png"
         )
-        self._maze = Maze()
         self._screen = pygame.display.set_mode(
             (self._maze.get_screen().get_size())
         )
@@ -37,7 +38,7 @@ class GameScreen(ScreenBase):
             )
             self.entidad.return_to_start()
         self.entidad.update()
-        self.entidad.move()
+        self.entidad.move(self._maze)
         return True
 
     def render(self) -> None:

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import pygame
 from enum import Enum
+from pathlib import Path
 
 
 class Direction(Enum):
@@ -19,32 +20,46 @@ class Entity(ABC, pygame.sprite.Sprite):
 
         pygame.sprite.Sprite.__init__(self)
         self.start_coord = start_coord
+        if not Path(sprite_path).exists():
+            raise ValueError(f"Can't access sprite file {sprite_path}")
+        self.image = pygame.Surface([39,39])
+        self.image.fill("orange")
+        self.rect = self.image.get_rect()
         self.return_to_start()
-        self.image = pygame.image.load(sprite_path)
-        self.image = pygame.transform.scale(self.image, (48, 48))
-
-        
         self._velocity = 1
-        self._direction = Direction.WEST
+        self._wanted_dir = Direction.NORTH
+        self._direction = self._wanted_dir
 
-    def move(self) -> None:
+    def move(self, maze) -> None:
+
+        if maze.is_centered_in_cell(self.get_coord()):
+
+            if not maze.intersect_wall(
+                self.get_coord(),
+                self._wanted_dir.value
+            ):
+                self._direction = self._wanted_dir
+            if m
+            aze.intersect_wall(self.get_coord(), self._direction.value):
+                return
+
         if self._direction == Direction.NORTH:
-            self._y -= self._velocity
+            self.rect.centery -= self._velocity
         elif self._direction == Direction.SOUTH:
-            self._y += self._velocity
+            self.rect.centery += self._velocity
         elif self._direction == Direction.EAST:
-            self._x += self._velocity
+            self.rect.centerx += self._velocity
         elif self._direction == Direction.WEST:
-            self._x -= self._velocity
+            self.rect.centerx -= self._velocity
 
     def get_sprite(self) -> pygame.Surface:
         return self.image
 
     def get_coord(self) -> tuple[int, int]:
-        return (self._x, self._y)
-    
+        return (self.rect.centerx, self.rect.centery)
+
     def return_to_start(self):
-        self._x, self._y = self.start_coord
+        self.rect.centerx, self.rect.centery = self.start_coord
 
     @abstractmethod
     def update(self):

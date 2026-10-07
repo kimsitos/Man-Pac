@@ -3,7 +3,7 @@ import pygame
 
 
 class Maze:
-    cell_size = 50
+    cell_size = 40
     wall_color = (255, 255, 255)
     wall_width = 1
 
@@ -18,12 +18,25 @@ class Maze:
         }
         self._draw_maze(self._generator.maze)
 
-    def generate_new_maze(self):
+    def generate_new_maze(self) -> None:
         self._generator.generate(self._seed)
-        self._maze_screen = self._draw_maze(self._generator.maze)
+        self._draw_maze(self._generator.maze)
 
     def get_screen(self) -> pygame.Surface:
         return self._maze_screen
+
+    def is_centered_in_cell(self, pos: tuple[int, int]) -> bool:
+        px, py = pos
+        if (px % self.cell_size != 0) or (py % self.cell_size != 0):
+            return False
+        return True
+
+    def intersect_wall(self, pos: tuple[int, int], direction: str) -> bool:
+        px, py = pos
+        row = py // self.cell_size
+        col = px // self.cell_size
+        cell = self._generator.maze[row][col]
+        return (cell & self._mask_walls[direction]) != 0
 
     def _draw_maze(self, maze: list[list[int]]) -> None:
         """

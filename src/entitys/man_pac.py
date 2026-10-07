@@ -3,14 +3,14 @@ import pygame
 
 
 class PacMan(Entity):
-    def update(self):
+    def update(self) -> None:
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_w]:
-            self._direction = Direction.NORTH
+            self._wanted_dir = Direction.NORTH
         elif keys[pygame.K_s]:
-            self._direction = Direction.SOUTH
+            self._wanted_dir = Direction.SOUTH
         elif keys[pygame.K_d]:
-            self._direction = Direction.EAST
+            self._wanted_dir = Direction.EAST
         elif keys[pygame.K_a]:
-            self._direction = Direction.WEST
+            self._wanted_dir = Direction.WEST
