@@ -39,8 +39,7 @@ class Entity(ABC, pygame.sprite.Sprite):
                 self._wanted_dir.value
             ):
                 self._direction = self._wanted_dir
-            if m
-            aze.intersect_wall(self.get_coord(), self._direction.value):
+            if maze.intersect_wall(self.get_coord(), self._direction.value):
                 return
 
         if self._direction == Direction.NORTH:
