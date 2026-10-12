@@ -19,19 +19,62 @@ class Maze:
         self._draw_maze(self._generator.maze)
 
     def generate_new_maze(self) -> None:
+        """Generates a new maze based on
+        the previously given seed
+        """
         self._generator.generate(self._seed)
         self._draw_maze(self._generator.maze)
 
     def get_screen(self) -> pygame.Surface:
+        """Returns the surface on which the maze is drawn
+
+        Returns
+        -------
+        pygame.Surface
+            The surface on which the maze is drawn        
+        """
         return self._maze_screen
 
     def is_centered_in_cell(self, pos: tuple[int, int]) -> bool:
+        """Checks that the given coordinates are
+        centered in a cell on the x and y axis
+
+        Parameters
+        ----------
+        pos : tuple[int, int]
+            Coordinates of the entity.
+            Format: (x, y)
+
+        Returns
+        -------
+        bool
+            True if it is centered on the x and y axes
+            of the cell in which it is positioned.
+            False if not
+        """
         px, py = pos
         if (px % self.cell_size != 0) or (py % self.cell_size != 0):
             return False
         return True
 
     def intersect_wall(self, pos: tuple[int, int], direction: str) -> bool:
+        """checks that an entity does not intersect
+        a wall based on its coordinates
+
+        Parameters
+        ----------
+        pos : tuple[int, int]
+            Coordinates of the entity.
+            Format: (x, y)
+        direction : str
+            String of the cardinal direction to
+            which you want to move the entity
+
+        Returns
+        -------
+        bool
+            True if it intersects a wall, False if it does not intersect a wall
+        """
         px, py = pos
         row = py // self.cell_size
         col = px // self.cell_size
