@@ -4,7 +4,15 @@ import pygame
 
 
 class PacMan(Entity):
+    def __init__(
+        self,
+        start_coord: tuple[int, int],
+            sprite_path: str):
+        super().__init__(start_coord, sprite_path)
+        self.image.fill("orange")
+
     def update(self, maze: Maze) -> None:
+
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_w]:

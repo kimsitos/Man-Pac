@@ -2,8 +2,10 @@ from mazegenerator import MazeGenerator
 import pygame
 
 
+cell_size = 50
+
+
 class Maze:
-    cell_size = 40
     wall_color = (255, 255, 255)
     wall_width = 1
 
@@ -53,7 +55,7 @@ class Maze:
             False if not
         """
         px, py = pos
-        if (px % self.cell_size != 0) or (py % self.cell_size != 0):
+        if (px % cell_size != 0) or (py % cell_size != 0):
             return False
         return True
 
@@ -76,8 +78,8 @@ class Maze:
             True if it intersects a wall, False if it does not intersect a wall
         """
         px, py = pos
-        row = py // self.cell_size
-        col = px // self.cell_size
+        row = py // cell_size
+        col = px // cell_size
         cell = self._generator.maze[row][col]
         return (cell & self._mask_walls[direction]) != 0
 
@@ -92,16 +94,16 @@ class Maze:
             where each bit represents a wall
         """
         self._maze_screen = pygame.Surface(
-            (len(maze) * self.cell_size + 1,
-             len(maze[0]) * self.cell_size + 1)
+            (len(maze) * cell_size + 1,
+             len(maze[0]) * cell_size + 1)
         )
         self._maze_screen.fill("black")
         for y in range(0, len(maze)):
             for x in range(0, len(maze[y])):
                 value = maze[y][x]
 
-                px = x * self.cell_size
-                py = y * self.cell_size
+                px = x * cell_size
+                py = y * cell_size
 
                 if value == 15:
                     pygame.draw.rect(
@@ -109,24 +111,24 @@ class Maze:
                         "yellow",
                         pygame.Rect(
                             (px, py),
-                            (self.cell_size, self.cell_size)
+                            (cell_size, cell_size)
                         )
                     )
 
                 if value & self._mask_walls["East"]:
                     self._draw_wall(
-                        (px + self.cell_size, py),
-                        (px + self.cell_size, py + self.cell_size)
+                        (px + cell_size, py),
+                        (px + cell_size, py + cell_size)
                     )
                 if value & self._mask_walls["North"]:
-                    self._draw_wall((px, py), (px + self.cell_size, py))
+                    self._draw_wall((px, py), (px + cell_size, py))
                 if value & self._mask_walls["South"]:
                     self._draw_wall(
-                        (px, py + self.cell_size),
-                        (px + self.cell_size, py + self.cell_size)
+                        (px, py + cell_size),
+                        (px + cell_size, py + cell_size)
                     )
                 if value & self._mask_walls["West"]:
-                    self._draw_wall((px, py), (px, py + self.cell_size))
+                    self._draw_wall((px, py), (px, py + cell_size))
 
     def _draw_wall(self, start: tuple[int, int], end: tuple[int, int]) -> None:
         """
