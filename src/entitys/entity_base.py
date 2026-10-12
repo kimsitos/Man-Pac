@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import pygame
 from enum import Enum
 from pathlib import Path
+from src.maze_class import Maze
 
 
 class Direction(Enum):
@@ -28,20 +29,9 @@ class Entity(ABC, pygame.sprite.Sprite):
         self.return_to_start()
         self._velocity = 1
         self._wanted_dir = Direction.NORTH
-        self._direction = self._wanted_dir
+        self._direction: Direction | None = self._wanted_dir
 
-    def move(self, maze) -> None:
-
-        if maze.is_centered_in_cell(self.get_coord()):
-
-            if not maze.intersect_wall(
-                self.get_coord(),
-                self._wanted_dir.value
-            ):
-                self._direction = self._wanted_dir
-            if maze.intersect_wall(self.get_coord(), self._direction.value):
-                return
-
+    def move(self) -> None:
         if self._direction == Direction.NORTH:
             self.rect.centery -= self._velocity
         elif self._direction == Direction.SOUTH:
@@ -61,5 +51,15 @@ class Entity(ABC, pygame.sprite.Sprite):
         self.rect.centerx, self.rect.centery = self.start_coord
 
     @abstractmethod
-    def update(self):
-        pass
+    def update(self, maze: Maze) -> None:
+        if maze.is_centered_in_cell(self.get_coord()):
+
+            if not maze.intersect_wall(
+                self.get_coord(),
+                self._wanted_dir.value
+            ):
+                self._direction = self._wanted_dir
+            if not self._direction:
+                return
+            if maze.intersect_wall(self.get_coord(), self._direction.value):
+                self._direction = None

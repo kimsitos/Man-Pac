@@ -13,7 +13,7 @@ class GameScreen(ScreenBase):
 
     def __init__(self):
         self._maze = Maze()
-        self.entidad = PacMan(
+        self.player = PacMan(
             (len(self._maze._generator.maze) // 2 * self._maze.cell_size,
              len(self._maze._generator.maze[0]) // 2 * self._maze.cell_size),
             "assets/sprites/Man-Pac.png"
@@ -36,9 +36,9 @@ class GameScreen(ScreenBase):
             self._screen = pygame.display.set_mode(
                 (self._maze.get_screen().get_size())
             )
-            self.entidad.return_to_start()
-        self.entidad.update()
-        self.entidad.move(self._maze)
+            self.player.return_to_start()
+        self.player.update(self._maze)
+        self.player.move()
         return True
 
     def render(self) -> None:
@@ -47,7 +47,7 @@ class GameScreen(ScreenBase):
         """
         self.clear_screen()
         self._screen.blit(self._maze.get_screen())
-        self._screen.blit(self.entidad.get_sprite(), self.entidad.get_coord())
+        self._screen.blit(self.player.get_sprite(), self.player.get_coord())
 
     def clear_screen(self):
 

@@ -1,9 +1,10 @@
 from entitys.entity_base import Entity, Direction
+from src.maze_class import Maze
 import pygame
 
 
 class PacMan(Entity):
-    def update(self) -> None:
+    def update(self, maze: Maze) -> None:
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_w]:
@@ -14,3 +15,5 @@ class PacMan(Entity):
             self._wanted_dir = Direction.EAST
         elif keys[pygame.K_a]:
             self._wanted_dir = Direction.WEST
+
+        super().update(maze)
