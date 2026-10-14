@@ -56,6 +56,7 @@ class GameScreen(ScreenBase):
         """
         Renders the maze.
         """
+        self.clear_screen()
         if self.state == ScreenState.PLAY:
             self.change_color_title()
             self._screen.blit(self._maze.get_screen())
