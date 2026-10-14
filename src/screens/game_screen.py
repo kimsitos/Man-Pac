@@ -61,7 +61,6 @@ class GameScreen(ScreenBase):
         """
         Renders the maze.
         """
-        self.clear_screen()
         if self.state == ScreenState.PLAY:
             self.change_color_title()
             self._screen.blit(self._maze.get_screen())
@@ -91,17 +90,18 @@ class GameScreen(ScreenBase):
 
         maze = self._maze._generator.maze
         ghosts_pos = [
-            (0, 0),
-            (0, len(maze) - 1),
-            (len(maze[0]) - 1, 0),
-            (len(maze[0]) - 1, len(maze) - 1)
+            (0 * cell_size, 0 * cell_size),
+            (0 * cell_size, (len(maze) - 1) * cell_size),
+            ((len(maze[0]) - 1) * cell_size, 0 * cell_size),
+            ((len(maze[0]) - 1) * cell_size, (len(maze) - 1) * cell_size)
         ]
 
         self.ghost: pygame.sprite.Group = pygame.sprite.Group()
-        self.ghost.add(Ghost((x * cell_size, y * cell_size),
-                             "assets/sprites/Man-Pac.png")
-                       for x, y in ghosts_pos
+        self.ghost.add(Ghost(pos,
+                             f"assets/sprites/Ghost{i}.png")
+                       for i, pos in enumerate(ghosts_pos)
                        )
+        del ghosts_pos
 
         self._entitys.add(self.ghost)
 
