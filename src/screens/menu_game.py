@@ -1,4 +1,4 @@
-from screens.screen_base import ScreenBase, ScreenState
+from src.screens.screen_base import ScreenBase, ScreenState
 import pygame
 
 
@@ -7,13 +7,13 @@ class Menu_Game(ScreenBase):
 
     def __init__(self):
         self.state = ScreenState.MENU_GAME
-        self.font = pygame.font.Font(None, 50)
+        self.font = pygame.font.Font(None, 120)
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
-        self.menu_rect = self.menu_text.get_rect(center=(300, 330))
+        self.menu_rect = self.menu_text.get_rect(center=(600, 690))
         self.continue_text = self.font.render(
             "Continue", True, (255, 255, 255))
-        self.continue_rect = self.continue_text.get_rect(center=(300, 270))
-        self.screen = pygame.display.set_mode((600, 600))
+        self.continue_rect = self.continue_text.get_rect(center=(600, 600))
+        self.screen = pygame.display.set_mode((1200, 1200))
 
     def event_cacher(self):
         for event in pygame.event.get():
@@ -52,22 +52,3 @@ class Menu_Game(ScreenBase):
             self.change_color_title()
             self.screen.blit(self.menu_text, self.menu_rect)
             self.screen.blit(self.continue_text, self.continue_rect)
-
-
-if __name__ == "__main__":
-    pygame.init()
-
-    screen = Menu_Game()
-
-    clock = pygame.time.Clock()
-    running = True
-
-    while running:
-        running = screen.event_cacher()
-
-        screen.render()
-
-        pygame.display.flip()
-        clock.tick(60)
-
-    pygame.quit()
