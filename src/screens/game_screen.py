@@ -38,12 +38,7 @@ class GameScreen(ScreenBase):
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_m]:
-            self._maze.generate_new_maze()
-            self._screen = pygame.display.set_mode(
-                (self._maze.get_screen().get_size())
-            )
-            for entity in self._entitys:
-                entity.return_to_start()
+            self.new_game()
 
         self._check_collides()
         self._entitys.update(self._maze)
@@ -78,6 +73,14 @@ class GameScreen(ScreenBase):
         next_state = self.state.value
         self.state = ScreenState.PLAY
         return next_state
+
+    def new_game(self):
+        self._maze.generate_new_maze()
+        self._screen = pygame.display.set_mode(
+            (self._maze.get_screen().get_size())
+        )
+        for entity in self._entitys:
+            entity.return_to_start()
 
     def _create_entitys(self) -> None:
         self._entitys: pygame.sprite.Group = pygame.sprite.Group()
