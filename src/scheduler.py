@@ -1,15 +1,9 @@
 import pygame
-from enum import Enum
-
+from src.screens.screen_base import ScreenState
 from src.screens.menu import Menu
+from src.screens.menu_game import Menu_Game
 from src.screens.game_screen import GameScreen
 from src.screens.high_score import High_score
-
-
-class ScreenState(Enum):
-    MENU = "MENU"
-    PLAY = "PLAY"
-    HIGH_SCORE = "HIGH_SCORE"
 
 
 class GameScheduler:
@@ -18,6 +12,7 @@ class GameScheduler:
         self.current_state = ScreenState.MENU.value
         self.screens = {
             ScreenState.MENU.value: Menu(),
+            ScreenState.MENU_GAME.value: Menu_Game(),
             ScreenState.PLAY.value: GameScreen(),
             ScreenState.HIGH_SCORE.value: High_score(),
         }

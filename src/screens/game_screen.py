@@ -39,7 +39,6 @@ class GameScreen(ScreenBase):
         self._check_collides()
         self._entitys.update(self._maze)
 
-
         return True
 
     def render(self) -> None:

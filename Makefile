@@ -1,6 +1,8 @@
 PY_M = python3 -m
 UV_RUN = $(PY_M) uv run
 
+install:
+	uv sync
 
 run:
 	$(UV_RUN) python3 pac-man.py config.json

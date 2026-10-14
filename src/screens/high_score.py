@@ -1,17 +1,10 @@
 from src import BaseModel
-from enum import Enum
 from typing import cast, List, Dict, Any
 from pathlib import Path
 import json
 import pygame
 
-from src.screens.screen_base import ScreenBase
-
-
-class StateMachine(Enum):
-    """Maquina de estados de high score"""
-    MENU = "MENU"
-    HIGH_SCORE = "HIGH_SCORE"
+from src.screens.screen_base import ScreenBase, ScreenState
 
 
 class Player(BaseModel):
@@ -24,11 +17,11 @@ class High_score(ScreenBase):
     """pantalla de high score"""
 
     def __init__(self):
-        self.state = StateMachine.HIGH_SCORE
+        self.state = ScreenState.HIGH_SCORE
         self.players = load_players("high_scores.json")
-        self.font = pygame.font.Font(None, 50)
-        self.title_font = pygame.font.Font(None, 80)
-        self.menu_text = self.font.render("MENU", True, (255, 255, 255))
+        self.font = pygame.font.Font(None, 70)
+        self.title_font = pygame.font.Font(None, 85)
+        self.menu_text = self.font.render("Menu", True, (255, 255, 255))
         self.menu_rect = self.menu_text.get_rect(center=(1200 // 2, 930))
         self.screen = pygame.display.set_mode((1200, 1000))
 
@@ -36,22 +29,19 @@ class High_score(ScreenBase):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
-            if self.state == StateMachine.HIGH_SCORE:
+            if self.state == ScreenState.HIGH_SCORE:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.menu_rect.collidepoint(event.pos):
-                        self.state = StateMachine.MENU
+                        self.state = ScreenState.MENU
         return True
 
     def change_screen(self):
-        if self.state == StateMachine.HIGH_SCORE:
+        if self.state == ScreenState.HIGH_SCORE:
             return None
 
         next_state = self.state.value
-        self.state = StateMachine.HIGH_SCORE
+        self.state = ScreenState.HIGH_SCORE
         return next_state
-
-    def clear_screen(self) -> None:
-        self.screen.fill((0, 0, 0))
 
     def change_color_title(self):
         mouse_pos = pygame.mouse.get_pos()
@@ -69,38 +59,45 @@ class High_score(ScreenBase):
 
         self.screen.blit(title, (350, 50))
 
-        start_y = 180
-
         for index, player in enumerate(self.players):
-            text = self.font.render(
-                f"{index + 1}. {player.name:<10} {player.scored}",
+
+            if index == 0:
+                color = (255, 215, 0)
+            elif index == 1:
+                color = (192, 192, 192)
+            elif index == 2:
+                color = (205, 127, 50)
+            else:
+                color = (255, 255, 255)
+
+            pos_text = self.font.render(
+                f"{index + 1}.",
                 True,
-                (255, 255, 255)
+                color
             )
 
-            self.screen.blit(
-                text,
-                (250, start_y + index * 70)
+            name_text = self.font.render(
+                player.name,
+                True,
+                color
             )
 
-    def _render_title(
-        self,
-        text: str,
-        rect: Any,
-        hover_color: tuple[int, int, int],
-        mouse_pos: tuple[int, int],
-    ) -> Any:
-        color = (
-            hover_color
-            if rect.collidepoint(mouse_pos)
-            else (255, 255, 255)
-        )
-        return self.font.render(text, True, color)
+            score_text = self.font.render(
+                str(player.scored),
+                True,
+                color
+            )
+
+            y = 180 + index * 60
+
+            self.screen.blit(pos_text, (195, y))
+            self.screen.blit(name_text, (260, y))
+            self.screen.blit(score_text, (850, y))
 
     def render(self):
         self.clear_screen()
 
-        if self.state == StateMachine.HIGH_SCORE:
+        if self.state == ScreenState.HIGH_SCORE:
             self.render_high_scores()
             self.change_color_title()
             self.screen.blit(self.menu_text, self.menu_rect)
@@ -133,8 +130,8 @@ def load_players(path: str) -> list[Player]:
         raise ValueError(
             "There can only be 10 players on the high scores list."
         )
-    elif len(list_players) < 0:
-        return "There are not scores"
+    if not list_players:
+        return []
     return list_players
 
 
