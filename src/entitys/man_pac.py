@@ -9,19 +9,18 @@ class PacMan(Entity):
         start_coord: tuple[int, int],
             sprite_path: str):
         super().__init__(start_coord, sprite_path)
-        self.image.fill("orange")
 
     def update(self, maze: Maze) -> None:
 
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_w]:
+        if keys[pygame.K_w] or keys[pygame.K_UP]:
             self._wanted_dir = Direction.NORTH
-        elif keys[pygame.K_s]:
+        elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
             self._wanted_dir = Direction.SOUTH
-        elif keys[pygame.K_d]:
+        elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             self._wanted_dir = Direction.EAST
-        elif keys[pygame.K_a]:
+        elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
             self._wanted_dir = Direction.WEST
 
         super().update(maze)

@@ -23,12 +23,16 @@ class Entity(ABC, pygame.sprite.Sprite):
         self.start_coord = start_coord
         if not Path(sprite_path).exists():
             raise ValueError(f"Can't access sprite file {sprite_path}")
-        self.image: pygame.Surface = pygame.Surface(
-            [cell_size - 1, cell_size - 1]
+        self.image: pygame.Surface = pygame.image.load(
+            sprite_path
         )
-        self.image.fill("purple")
+        self.image = pygame.transform.scale(
+            self.image,
+            (cell_size - 1, cell_size - 1)
+            )
+
         self.rect: pygame.Rect = self.image.get_rect()
-        self.radius = self.rect.width // 2
+        self.radius = self.rect.width // 2 - 4
         self.return_to_start()
         self._velocity = 2
         self._wanted_dir = Direction.NORTH
