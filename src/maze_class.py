@@ -33,7 +33,7 @@ class Maze:
         Returns
         -------
         pygame.Surface
-            The surface on which the maze is drawn        
+            The surface on which the maze is drawn    
         """
         return self._maze_screen
 

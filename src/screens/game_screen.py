@@ -1,8 +1,9 @@
-from src.entitys.man_pac import PacMan
+from src.entitys import PacMan, Ghost
 # from src.entitys.sprite import Sprite
 from src.screens.screen_base import ScreenBase
 from src.maze_class import Maze, cell_size
 from src import pygame
+import sys
 
 
 class GameScreen(ScreenBase):
@@ -12,14 +13,10 @@ class GameScreen(ScreenBase):
 
     def __init__(self):
         self._maze = Maze()
-        self.player = PacMan(
-            (len(self._maze._generator.maze) // 2 * cell_size,
-             len(self._maze._generator.maze[0]) // 2 * cell_size),
-            "assets/sprites/Man-Pac.png"
-        )
         self._screen = pygame.display.set_mode(
             (self._maze.get_screen().get_size())
         )
+        self._create_entitys()
 
     def event_cacher(self):
         """
@@ -30,26 +27,65 @@ class GameScreen(ScreenBase):
                 return False
 
         keys = pygame.key.get_pressed()
+
         if keys[pygame.K_m]:
             self._maze.generate_new_maze()
             self._screen = pygame.display.set_mode(
                 (self._maze.get_screen().get_size())
             )
-            self.player.return_to_start()
-        self.player.update(self._maze)
+            for entity in self._entitys:
+                entity.return_to_start()
+
+        self._check_collides()
+        self._entitys.update(self._maze)
+
+
         return True
 
     def render(self) -> None:
         """
         Renders the maze.
         """
-        self.clear_screen()
         self._screen.blit(self._maze.get_screen())
-        self._screen.blit(self.player.get_sprite(), self.player.get_coord())
+        self._entitys.draw(self._screen)
 
-    def clear_screen(self):
+    def clear_screen(self) -> None:
 
         self._screen.fill("black")
 
     def change_screen(self):
         return None
+
+    def _create_entitys(self) -> None:
+        self._entitys: pygame.sprite.Group = pygame.sprite.Group()
+        self.player = PacMan(
+            (len(self._maze._generator.maze) // 2 * cell_size,
+             len(self._maze._generator.maze[0]) // 2 * cell_size),
+            "assets/sprites/Man-Pac.png"
+        )
+        self._entitys.add(self.player)
+
+        maze = self._maze._generator.maze
+        ghosts_pos = [
+            (0, 0),
+            (0, len(maze) - 1),
+            (len(maze[0]) - 1, 0),
+            (len(maze[0]) - 1, len(maze) - 1)
+        ]
+
+        self.ghost: pygame.sprite.Group = pygame.sprite.Group()
+        self.ghost.add(Ghost((x * cell_size, y * cell_size),
+                             "assets/sprites/Man-Pac.png")
+                       for x, y in ghosts_pos
+                       )
+
+        self._entitys.add(self.ghost)
+
+    def _check_collides(self):
+        if pygame.sprite.spritecollide(
+            self.player, self.ghost,
+            False,
+            pygame.sprite.collide_circle
+        ):
+            # provisional
+            sys.exit()

@@ -28,6 +28,7 @@ class Entity(ABC, pygame.sprite.Sprite):
         )
         self.image.fill("purple")
         self.rect: pygame.Rect = self.image.get_rect()
+        self.radius = self.rect.width // 2
         self.return_to_start()
         self._velocity = 2
         self._wanted_dir = Direction.NORTH
