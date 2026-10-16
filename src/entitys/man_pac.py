@@ -8,6 +8,7 @@ class PacMan(Entity):
         self,
         start_coord: tuple[int, int],
             sprite_path: str):
+        self.score = 0
         super().__init__(start_coord, sprite_path)
 
     def update(self, maze: Maze) -> None:
@@ -24,3 +25,11 @@ class PacMan(Entity):
             self._wanted_dir = Direction.WEST
 
         super().update(maze)
+
+    def set_score(self, points: int) -> None:
+        if points <= 0:
+            return
+        self.score += points
+
+    def get_score(self) -> int:
+        return self.score

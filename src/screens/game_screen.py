@@ -1,4 +1,4 @@
-from src.entitys import PacMan, Ghost
+from src.entitys import PacMan, Ghost, Gumpac
 # from src.entitys.sprite import Sprite
 from src.screens.screen_base import ScreenBase, ScreenState
 from src.maze_class import Maze, cell_size
@@ -62,6 +62,8 @@ class GameScreen(ScreenBase):
             self._screen.blit(self._maze.get_screen())
             self._screen.blit(self.menu_text, self.menu_rect)
             self._entitys.draw(self._screen)
+            self.pac_gums.draw(self._screen)
+        print(self.player.get_score())
 
     def clear_screen(self) -> None:
 
@@ -105,7 +107,13 @@ class GameScreen(ScreenBase):
                              f"assets/sprites/Ghost{i}.png")
                        for i, pos in enumerate(ghosts_pos)
                        )
-        del ghosts_pos
+        self.pac_gums: pygame.sprite.Group = pygame.sprite.Group()
+        self.pac_gums.add(*(Gumpac(
+            ((x * cell_size) + (cell_size // 4), (y * cell_size) + (cell_size // 4)))
+            for y in range(len(maze))
+            for x in range(len(maze[y]))
+            if maze[y][x] != 15
+        ))
 
         self._entitys.add(self.ghost)
 
@@ -117,3 +125,16 @@ class GameScreen(ScreenBase):
         ):
             # provisional
             sys.exit()
+
+        gumpac = pygame.sprite.spritecollide(
+            self.player, self.pac_gums,
+            False,
+            pygame.sprite.collide_circle
+        )
+        if gumpac:
+            gumpac = gumpac[0]
+            self.player.set_score(gumpac.point_value)
+            gumpac.kill()
+            if len(self.pac_gums) == 0:
+                print("ALL CLEARED")
+                sys.exit()
