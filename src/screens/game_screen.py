@@ -57,12 +57,13 @@ class GameScreen(ScreenBase):
         Renders the maze.
         """
         self.clear_screen()
-        if self.state == ScreenState.PLAY:
-            self.change_color_title()
-            self._screen.blit(self._maze.get_screen())
-            self._screen.blit(self.menu_text, self.menu_rect)
-            self._entitys.draw(self._screen)
-            self.pac_gums.draw(self._screen)
+        if self.state != ScreenState.PLAY:
+            return None
+        self.change_color_title()
+        self._screen.blit(self._maze.get_screen())
+        self._screen.blit(self.menu_text, self.menu_rect)
+        self._entitys.draw(self._screen)
+        self.pac_gums.draw(self._screen)
         print(self.player.get_score())
 
     def clear_screen(self) -> None:
