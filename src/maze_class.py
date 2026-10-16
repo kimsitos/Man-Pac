@@ -27,6 +27,18 @@ class Maze:
         self._generator.generate(self._seed)
         self._draw_maze(self._generator.maze)
 
+    def get_maze(self) -> list[list[int]]:
+        """Returns the maze grid. Each cell is a 4-bit mask (from 0 to 15)
+            where each bit represents a wall
+
+        Returns
+        -------
+        list[list[int]]
+            Maze grid. Each cell is a 4-bit mask (from 0 to 15)
+            where each bit represents a wall
+        """
+        return self._generator.maze
+
     def get_screen(self) -> pygame.Surface:
         """Returns the surface on which the maze is drawn
 
