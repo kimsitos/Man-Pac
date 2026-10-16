@@ -1,4 +1,4 @@
-from src.entitys import PacMan, Ghost, Gumpac
+from src.entitys import PacMan, Ghost, Gumpac, SuperGumpac
 # from src.entitys.sprite import Sprite
 from src.screens.screen_base import ScreenBase, ScreenState
 from src.maze_class import Maze, cell_size
@@ -65,7 +65,6 @@ class GameScreen(ScreenBase):
         self._screen.blit(self.menu_text, self.menu_rect)
         self.entitys.draw(self._screen)
         self.pac_gums.draw(self._screen)
-        print(self.player.get_score())
 
     def clear_screen(self) -> None:
 
@@ -87,22 +86,32 @@ class GameScreen(ScreenBase):
         self.pac_gums = self._create_pacgums(self._maze.get_maze())
 
     def _check_collides(self):
-        if pygame.sprite.spritecollide(
+        ghost_detection = pygame.sprite.spritecollide(
             self.player, self.ghosts,
             False,
-            pygame.sprite.collide_circle
-        ):
-            # provisional
-            sys.exit()
+            pygame.sprite.collide_circle)
+        if ghost_detection:
+            for ghost in ghost_detection:
+                if ghost.is_eatable():
+                    ghost.kill()
+                    self.player.set_score(ghost.get_point())
+                else:
+                    sys.exit()
 
-        gumpac = pygame.sprite.spritecollide(
+            # provisional
+
+        gumpac_detection = pygame.sprite.spritecollide(
             self.player, self.pac_gums,
             False,
             pygame.sprite.collide_circle
         )
-        if gumpac:
-            gumpac = gumpac[0]
+        if gumpac_detection:
+            gumpac = gumpac_detection[0]
             self.player.set_score(gumpac.point_value)
+            if isinstance(gumpac, SuperGumpac):
+                for ghost in self.ghosts:
+                    ghost.make_eatable()
+
             gumpac.kill()
             if len(self.pac_gums) == 0:
 
@@ -144,12 +153,23 @@ class GameScreen(ScreenBase):
 
     @staticmethod
     def _create_pacgums(maze: list[list[int]]) -> pygame.sprite.Group:
+        import random
+
         pac_gums: pygame.sprite.Group = pygame.sprite.Group()
         pac_gums.add(Gumpac(
-            ((x * cell_size) + (cell_size // 4), (y * cell_size) + (cell_size // 4)))
+            (
+                (x * cell_size) + (cell_size // 4),
+                (y * cell_size) + (cell_size // 4)
+            ))
             for y in range(len(maze))
             for x in range(len(maze[y]))
             if maze[y][x] != 15
         )
+
+        for _ in range(4):
+            gum = random.choice(pac_gums.sprites())
+            pac_gums.remove(gum)
+            supergum = SuperGumpac(gum.rect.topleft)
+            pac_gums.add(supergum)
 
         return pac_gums
