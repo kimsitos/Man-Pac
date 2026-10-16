@@ -41,7 +41,7 @@ class GameScreen(ScreenBase):
             self.new_game()
 
         self._check_collides()
-        self._entitys.update(self._maze)
+        self.entitys.update(self._maze)
 
         return True
 
@@ -59,10 +59,11 @@ class GameScreen(ScreenBase):
         self.clear_screen()
         if self.state != ScreenState.PLAY:
             return None
+
         self.change_color_title()
         self._screen.blit(self._maze.get_screen())
         self._screen.blit(self.menu_text, self.menu_rect)
-        self._entitys.draw(self._screen)
+        self.entitys.draw(self._screen)
         self.pac_gums.draw(self._screen)
         print(self.player.get_score())
 
@@ -80,47 +81,14 @@ class GameScreen(ScreenBase):
 
     def new_game(self):
         self._maze.generate_new_maze()
-        self._screen = pygame.display.set_mode(
-            (self._maze.get_screen().get_size())
-        )
-        for entity in self._entitys:
+        for entity in self.entitys:
             entity.return_to_start()
-
-    def _create_entitys(self) -> None:
-        self._entitys: pygame.sprite.Group = pygame.sprite.Group()
-        self.player = PacMan(
-            (len(self._maze._generator.maze) // 2 * cell_size,
-             len(self._maze._generator.maze[0]) // 2 * cell_size),
-            "assets/sprites/Man-Pac.png"
-        )
-        self._entitys.add(self.player)
-
-        maze = self._maze._generator.maze
-        ghosts_pos = [
-            (0 * cell_size, 0 * cell_size),
-            (0 * cell_size, (len(maze) - 1) * cell_size),
-            ((len(maze[0]) - 1) * cell_size, 0 * cell_size),
-            ((len(maze[0]) - 1) * cell_size, (len(maze) - 1) * cell_size)
-        ]
-
-        self.ghost: pygame.sprite.Group = pygame.sprite.Group()
-        self.ghost.add(Ghost(pos,
-                             f"assets/sprites/Ghost{i}.png")
-                       for i, pos in enumerate(ghosts_pos)
-                       )
-        self.pac_gums: pygame.sprite.Group = pygame.sprite.Group()
-        self.pac_gums.add(*(Gumpac(
-            ((x * cell_size) + (cell_size // 4), (y * cell_size) + (cell_size // 4)))
-            for y in range(len(maze))
-            for x in range(len(maze[y]))
-            if maze[y][x] != 15
-        ))
-
-        self._entitys.add(self.ghost)
+        del self.pac_gums
+        self.pac_gums = self._create_pacgums(self._maze.get_maze())
 
     def _check_collides(self):
         if pygame.sprite.spritecollide(
-            self.player, self.ghost,
+            self.player, self.ghosts,
             False,
             pygame.sprite.collide_circle
         ):
@@ -137,5 +105,51 @@ class GameScreen(ScreenBase):
             self.player.set_score(gumpac.point_value)
             gumpac.kill()
             if len(self.pac_gums) == 0:
+
+                # provisional
                 print("ALL CLEARED")
                 sys.exit()
+
+    # Creation of Game Objects
+    def _create_entitys(self) -> None:
+        self.entitys: pygame.sprite.Group = pygame.sprite.Group()
+        self.player = PacMan(
+            (len(self._maze.get_maze()) // 2 * cell_size,
+             len(self._maze.get_maze()[0]) // 2 * cell_size),
+            "assets/sprites/Man-Pac.png"
+        )
+
+        self.ghosts = self._create_ghosts(self._maze.get_maze())
+        self.pac_gums = self._create_pacgums(self._maze.get_maze())
+
+        self.entitys.add(self.player)
+        self.entitys.add(self.ghosts)
+
+    @staticmethod
+    def _create_ghosts(maze: list[list[int]]) -> pygame.sprite.Group:
+        ghosts_pos = [
+            (0 * cell_size, 0 * cell_size),
+            (0 * cell_size, (len(maze) - 1) * cell_size),
+            ((len(maze[0]) - 1) * cell_size, 0 * cell_size),
+            ((len(maze[0]) - 1) * cell_size, (len(maze) - 1) * cell_size)
+        ]
+
+        ghost: pygame.sprite.Group = pygame.sprite.Group()
+        ghost.add(Ghost(pos,
+                        f"assets/sprites/Ghost{i}.png")
+                  for i, pos in enumerate(ghosts_pos)
+                  )
+
+        return ghost
+
+    @staticmethod
+    def _create_pacgums(maze: list[list[int]]) -> pygame.sprite.Group:
+        pac_gums: pygame.sprite.Group = pygame.sprite.Group()
+        pac_gums.add(Gumpac(
+            ((x * cell_size) + (cell_size // 4), (y * cell_size) + (cell_size // 4)))
+            for y in range(len(maze))
+            for x in range(len(maze[y]))
+            if maze[y][x] != 15
+        )
+
+        return pac_gums
