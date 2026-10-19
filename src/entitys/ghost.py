@@ -20,6 +20,7 @@ class Ghost(Entity):
         self._duration_eatable = 50 * 200
         self._start_eatable = pygame.time.get_ticks()
         self.state = State.NORMAL
+        self._original_image = self.image.copy()
 
     def update(self, maze: Maze) -> None:
         self._wanted_dir = random.choice(list(Direction))
@@ -28,6 +29,7 @@ class Ghost(Entity):
             print(pygame.time.get_ticks() - self._start_eatable)
             if pygame.time.get_ticks() - self._start_eatable >= self._duration_eatable:
                 self.state = State.NORMAL
+                self.image = self._original_image
                 print("non Eatable")
        
         super().update(maze)
@@ -37,6 +39,7 @@ class Ghost(Entity):
 
     def make_eatable(self) -> None:
         self._start_eatable = pygame.time.get_ticks()
+        self.image.fill((255,0,0), special_flags=pygame.BLEND_RGBA_MULT)
         self.state = State.EATEABLE
         print("IM EATABLE NOW")
 
