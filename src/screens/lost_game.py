@@ -14,10 +14,10 @@ class Lost_Game(ScreenBase):
         self.input_font = pygame.font.Font(None, 80)
         self.font = pygame.font.Font(None, 120)
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
-        self.menu_rect = self.menu_text.get_rect(center=(600, 690))
+        self.menu_rect = self.menu_text.get_rect(center=(600, 970))
         self.new_score_text = self.font.render(
             "New Score", True, (255, 255, 255))
-        self.new_score_rect = self.new_score_text.get_rect(center=(600, 600))
+        self.new_score_rect = self.new_score_text.get_rect(center=(600, 900))
         self.screen = pygame.display.get_surface()
         background = pygame.image.load(
             "assets/sprites/background_lost_game.png"
@@ -82,7 +82,7 @@ class Lost_Game(ScreenBase):
             pygame.draw.rect(
                 self.screen,
                 (255, 255, 255),
-                (350, 400, 500, 100),
+                (350, 750, 500, 100),
                 3
             )
 
@@ -92,7 +92,7 @@ class Lost_Game(ScreenBase):
                 (255, 255, 255)
             )
 
-            self.screen.blit(input_surface, (370, 420))
+            self.screen.blit(input_surface, (370, 780))
 
 
 if __name__ == "__main__":

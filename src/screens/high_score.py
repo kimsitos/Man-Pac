@@ -19,10 +19,10 @@ class High_score(ScreenBase):
     def __init__(self):
         self.state = ScreenState.HIGH_SCORE
         self.players = []
-        self.font = pygame.font.Font(None, 70)
+        self.font = pygame.font.Font(None, 80)
         self.title_font = pygame.font.Font(None, 85)
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
-        self.menu_rect = self.menu_text.get_rect(center=(1200 // 2, 930))
+        self.menu_rect = self.menu_text.get_rect(center=(1200 // 2,1100))
         self.screen = pygame.display.get_surface()
         background = pygame.image.load(
             "assets/sprites/background_high_score.jpg"
@@ -95,10 +95,10 @@ class High_score(ScreenBase):
                 color
             )
 
-            y = 180 + index * 60
+            y = 180 + index * 90
 
             self.screen.blit(pos_text, (195, y))
-            self.screen.blit(name_text, (260, y))
+            self.screen.blit(name_text, (280, y))
             self.screen.blit(score_text, (850, y))
 
     def render(self):

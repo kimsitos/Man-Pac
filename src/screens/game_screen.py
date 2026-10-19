@@ -61,8 +61,8 @@ class GameScreen(ScreenBase):
         self.change_color_title()
         self.screen.blit(self._maze.get_screen())
         self.screen.blit(self.menu_text, self.menu_rect)
-        self.entitys.draw(self.screen)
         self.pac_gums.draw(self.screen)
+        self.entitys.draw(self.screen)
 
     def change_screen(self):
         if self.state == ScreenState.PLAY:

@@ -2,7 +2,7 @@ from mazegenerator import MazeGenerator
 import pygame
 
 
-cell_size = 50
+cell_size = 80
 
 
 class Maze:

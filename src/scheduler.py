@@ -10,7 +10,7 @@ from src.screens.lost_game import Lost_Game
 class GameScheduler:
     def __init__(self):
         pygame.init()
-        pygame.display.set_mode((1200, 1200))
+        pygame.display.set_mode((1400, 1400))
         self.current_state = ScreenState.MENU.value
         self.game_screen = GameScreen()
         self.screens = {
@@ -48,5 +48,6 @@ class GameScheduler:
             screen.render()
             pygame.display.flip()
             clock.tick(60)
+            print(clock.get_fps())
 
         pygame.quit()

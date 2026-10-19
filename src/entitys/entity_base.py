@@ -34,7 +34,7 @@ class Entity(ABC, pygame.sprite.Sprite):
         self.rect: pygame.Rect = self.image.get_rect()
         self.radius = self.rect.width // 2 - 4
         self.return_to_start()
-        self._velocity = 2
+        self._velocity = 5
         self._wanted_dir = Direction.NORTH
         self._direction: Direction = self._wanted_dir
 
