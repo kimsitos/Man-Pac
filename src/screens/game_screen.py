@@ -17,9 +17,7 @@ class GameScreen(ScreenBase):
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
         self.menu_rect = self.menu_text.get_rect(center=(1000, 50))
         self._maze = Maze()
-        self._screen = pygame.display.set_mode(
-            (self._maze.get_screen().get_size())
-        )
+        self.screen = pygame.display.get_surface()
         self._create_entitys()
 
     def event_cacher(self):
@@ -61,14 +59,10 @@ class GameScreen(ScreenBase):
             return None
 
         self.change_color_title()
-        self._screen.blit(self._maze.get_screen())
-        self._screen.blit(self.menu_text, self.menu_rect)
-        self.entitys.draw(self._screen)
-        self.pac_gums.draw(self._screen)
-
-    def clear_screen(self) -> None:
-
-        self._screen.fill("black")
+        self.screen.blit(self._maze.get_screen())
+        self.screen.blit(self.menu_text, self.menu_rect)
+        self.entitys.draw(self.screen)
+        self.pac_gums.draw(self.screen)
 
     def change_screen(self):
         if self.state == ScreenState.PLAY:
@@ -80,10 +74,9 @@ class GameScreen(ScreenBase):
 
     def new_game(self):
         self._maze.generate_new_maze()
-        for entity in self.entitys:
-            entity.return_to_start()
-        del self.pac_gums
+        self._create_entitys()
         self.pac_gums = self._create_pacgums(self._maze.get_maze())
+        self.state = ScreenState.PLAY
 
     def _check_collides(self):
         ghost_detection = pygame.sprite.spritecollide(
@@ -96,7 +89,7 @@ class GameScreen(ScreenBase):
                     ghost.kill()
                     self.player.set_score(ghost.get_point())
                 else:
-                    sys.exit()
+                    self.state = ScreenState.LOST_GAME
 
             # provisional
 

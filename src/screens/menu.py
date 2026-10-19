@@ -7,16 +7,23 @@ class Menu(ScreenBase):
 
     def __init__(self):
         self.state = ScreenState.MENU
-        self.screen = pygame.display.set_mode((1200, 1000))
-        self.font = pygame.font.Font(None, 100)
-        self.play_text = self.font.render("JUGAR", True, (255, 255, 255))
-        self.play_rect = self.play_text.get_rect(center=(1200 // 2, 300))
+        self.screen = pygame.display.get_surface()
+        self.font = pygame.font.Font(None, 90)
+        self.play_text = self.font.render("PLAY", True, (255, 255, 255))
+        self.play_rect = self.play_text.get_rect(center=(1200 // 2, 350))
         self.high_score_text = self.font.render(
             "HIGH SCORE", True, (255, 255, 255))
         self.high_score_rect = self.high_score_text.get_rect(
             center=(1200 // 2, 500))
         self.quit_text = self.font.render("QUIT", True, (255, 255, 255))
         self.quit_rect = self.quit_text.get_rect(center=(1200 // 2, 700))
+        background = pygame.image.load(
+            "assets/sprites/background_menu.jpg"
+        ).convert()
+        self.background = pygame.transform.scale(
+            background,
+            self.screen.get_size()
+        )
 
     def event_cacher(self):
         for event in pygame.event.get():
@@ -43,7 +50,7 @@ class Menu(ScreenBase):
     def change_color_title(self):
         mouse_pos = pygame.mouse.get_pos()
         self.play_text = self._render_title(
-            "JUGAR", self.play_rect, (255, 255, 0), mouse_pos
+            "PLAY", self.play_rect, (255, 255, 0), mouse_pos
         )
         self.high_score_text = self._render_title(
             "HIGH SCORE", self.high_score_rect, (255, 255, 0), mouse_pos
@@ -56,6 +63,8 @@ class Menu(ScreenBase):
         self.clear_screen()
 
         if self.state == ScreenState.MENU:
+            self.screen.blit(self.background, (0, 0))
+
             self.change_color_title()
             self.screen.blit(self.play_text, self.play_rect)
             self.screen.blit(self.high_score_text, self.high_score_rect)

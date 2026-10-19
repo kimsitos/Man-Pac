@@ -6,6 +6,8 @@ from enum import Enum
 class ScreenState(Enum):
     MENU = "MENU"
     PLAY = "PLAY"
+    WIN_GAME = "WIN_GAME"
+    LOST_GAME = "LOST_GAME"
     MENU_GAME = "MENU_GAME"
     HIGH_SCORE = "HIGH_SCORE"
 

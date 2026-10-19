@@ -9,11 +9,18 @@ class Menu_Game(ScreenBase):
         self.state = ScreenState.MENU_GAME
         self.font = pygame.font.Font(None, 120)
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
-        self.menu_rect = self.menu_text.get_rect(center=(600, 690))
+        self.menu_rect = self.menu_text.get_rect(center=(600, 890))
         self.continue_text = self.font.render(
             "Continue", True, (255, 255, 255))
-        self.continue_rect = self.continue_text.get_rect(center=(600, 600))
-        self.screen = pygame.display.set_mode((1200, 1200))
+        self.continue_rect = self.continue_text.get_rect(center=(600, 800))
+        self.screen = pygame.display.get_surface()
+        background = pygame.image.load(
+            "assets/sprites/background_high_score.jpg"
+        ).convert()
+        self.background = pygame.transform.scale(
+            background,
+            self.screen.get_size()
+        )
 
     def event_cacher(self):
         for event in pygame.event.get():
@@ -49,6 +56,7 @@ class Menu_Game(ScreenBase):
         self.clear_screen()
 
         if self.state == ScreenState.MENU_GAME:
+            self.screen.blit(self.background, (0, 0))
             self.change_color_title()
             self.screen.blit(self.menu_text, self.menu_rect)
             self.screen.blit(self.continue_text, self.continue_rect)

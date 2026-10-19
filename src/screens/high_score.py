@@ -18,12 +18,19 @@ class High_score(ScreenBase):
 
     def __init__(self):
         self.state = ScreenState.HIGH_SCORE
-        self.players = load_players("high_scores.json")
+        self.players = []
         self.font = pygame.font.Font(None, 70)
         self.title_font = pygame.font.Font(None, 85)
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
         self.menu_rect = self.menu_text.get_rect(center=(1200 // 2, 930))
-        self.screen = pygame.display.set_mode((1200, 1000))
+        self.screen = pygame.display.get_surface()
+        background = pygame.image.load(
+            "assets/sprites/background_high_score.jpg"
+        ).convert()
+        self.background = pygame.transform.scale(
+            background,
+            self.screen.get_size()
+        )
 
     def event_cacher(self):
         for event in pygame.event.get():
@@ -56,7 +63,7 @@ class High_score(ScreenBase):
             True,
             (255, 255, 0)
         )
-
+        self.players = load_players("high_scores.json")
         self.screen.blit(title, (350, 50))
 
         for index, player in enumerate(self.players):
@@ -98,6 +105,7 @@ class High_score(ScreenBase):
         self.clear_screen()
 
         if self.state == ScreenState.HIGH_SCORE:
+            self.screen.blit(self.background, (0, 0))
             self.render_high_scores()
             self.change_color_title()
             self.screen.blit(self.menu_text, self.menu_rect)
