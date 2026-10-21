@@ -24,6 +24,10 @@
         "scored": 200
     },
     {
+        "name": "Alberto",
+        "scored": 200
+    },
+    {
         "name": "Javi",
         "scored": 165
     },
@@ -34,9 +38,5 @@
     {
         "name": "Leo",
         "scored": 122
-    },
-    {
-        "name": "Dani",
-        "scored": 103
     }
 ]

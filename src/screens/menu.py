@@ -8,15 +8,15 @@ class Menu(ScreenBase):
     def __init__(self):
         self.state = ScreenState.MENU
         self.screen = pygame.display.get_surface()
-        self.font = pygame.font.Font(None, 90)
+        self.font = pygame.font.Font(None, 100)
         self.play_text = self.font.render("PLAY", True, (255, 255, 255))
-        self.play_rect = self.play_text.get_rect(center=(1200 // 2, 400))
+        self.play_rect = self.play_text.get_rect(center=(1400 // 2, 600))
         self.high_score_text = self.font.render(
             "HIGH SCORE", True, (255, 255, 255))
         self.high_score_rect = self.high_score_text.get_rect(
-            center=(1200 // 2, 500))
+            center=(1400 // 2, 700))
         self.quit_text = self.font.render("QUIT", True, (255, 255, 255))
-        self.quit_rect = self.quit_text.get_rect(center=(1200 // 2, 600))
+        self.quit_rect = self.quit_text.get_rect(center=(1400 // 2, 800))
         background = pygame.image.load(
             "assets/sprites/background_menu.jpg"
         ).convert()

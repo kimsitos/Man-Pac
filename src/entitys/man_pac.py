@@ -9,6 +9,7 @@ class PacMan(Entity):
         start_coord: tuple[int, int],
             sprite_path: str):
         self.score = 0
+        self.lives = 3
         super().__init__(start_coord, sprite_path)
 
     def update(self, maze: Maze) -> None:
@@ -33,3 +34,17 @@ class PacMan(Entity):
 
     def get_score(self) -> int:
         return self.score
+
+    def is_dead(self):
+        if self.lives <= 0:
+            return True
+        return False
+
+    def less_life(self) -> None:
+        if self.is_dead():
+            return self.lives
+        self.lives -= 1
+        print(self.lives)
+
+    def get_lives(self) -> int:
+        return self.lives

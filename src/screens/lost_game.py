@@ -11,13 +11,13 @@ class Lost_Game(ScreenBase):
         self.writing_name = False
         self.player_name = ""
         self.score = 200
-        self.input_font = pygame.font.Font(None, 80)
-        self.font = pygame.font.Font(None, 120)
+        self.input_font = pygame.font.Font(None, 100)
+        self.font = pygame.font.Font(None, 150)
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
-        self.menu_rect = self.menu_text.get_rect(center=(600, 970))
+        self.menu_rect = self.menu_text.get_rect(center=(700, 1300))
         self.new_score_text = self.font.render(
             "New Score", True, (255, 255, 255))
-        self.new_score_rect = self.new_score_text.get_rect(center=(600, 900))
+        self.new_score_rect = self.new_score_text.get_rect(center=(700, 1200))
         self.screen = pygame.display.get_surface()
         background = pygame.image.load(
             "assets/sprites/background_lost_game.png"
@@ -45,7 +45,7 @@ class Lost_Game(ScreenBase):
                         self.state = ScreenState.MENU
                     elif event.key == pygame.K_BACKSPACE:
                         self.player_name = self.player_name[:-1]
-                    else:
+                    elif len(self.player_name) < 10:
                         self.player_name += event.unicode
         return True
 
@@ -82,7 +82,7 @@ class Lost_Game(ScreenBase):
             pygame.draw.rect(
                 self.screen,
                 (255, 255, 255),
-                (350, 750, 500, 100),
+                (350, 1000, 700, 100),
                 3
             )
 
@@ -92,18 +92,4 @@ class Lost_Game(ScreenBase):
                 (255, 255, 255)
             )
 
-            self.screen.blit(input_surface, (370, 780))
-
-
-if __name__ == "__main__":
-    pygame.init()
-    screen = pygame.display.set_mode((1200, 1000))
-    lost_game_screen = Lost_Game()
-
-    running = True
-    while running:
-        running = lost_game_screen.event_cacher()
-        lost_game_screen.render()
-        pygame.display.flip()
-
-    pygame.quit()
+            self.screen.blit(input_surface, (360, 1020))

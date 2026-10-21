@@ -15,7 +15,7 @@ class GameScreen(ScreenBase):
         self.state = ScreenState.PLAY
         self.font = pygame.font.Font(None, 50)
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
-        self.menu_rect = self.menu_text.get_rect(center=(1000, 50))
+        self.menu_rect = self.menu_text.get_rect(center=(1300, 50))
         self._maze = Maze()
         self.screen = pygame.display.get_surface()
         self._create_entitys()
@@ -89,9 +89,10 @@ class GameScreen(ScreenBase):
                     ghost.kill()
                     self.player.set_score(ghost.get_point())
                 else:
-                    self.state = ScreenState.LOST_GAME
-
-            # provisional
+                    self.player.less_life()
+                    self.restar_position_pacman()
+                    if self.player.is_dead():
+                        self.state = ScreenState.LOST_GAME
 
         gumpac_detection = pygame.sprite.spritecollide(
             self.player, self.pac_gums,
@@ -112,12 +113,22 @@ class GameScreen(ScreenBase):
                 print("ALL CLEARED")
                 sys.exit()
 
+    def restar_position_pacman(self):
+        self.player.rect.topleft = self.player_start_pos
+        self.player.direction_x = 0
+        self.player.direction_y = 0
+
     # Creation of Game Objects
     def _create_entitys(self) -> None:
-        self.entitys: pygame.sprite.Group = pygame.sprite.Group()
+        self.entitys = pygame.sprite.Group()
+
+        self.player_start_pos = (
+            len(self._maze.get_maze()) // 2 * cell_size,
+            len(self._maze.get_maze()[0]) // 2 * cell_size
+        )
+
         self.player = PacMan(
-            (len(self._maze.get_maze()) // 2 * cell_size,
-             len(self._maze.get_maze()[0]) // 2 * cell_size),
+            self.player_start_pos,
             "assets/sprites/Man-Pac.png"
         )
 

@@ -1,5 +1,6 @@
-from screen_base import ScreenBase, ScreenState
+from src.screens.screen_base import ScreenBase, ScreenState
 import pygame
+
 
 class Win_Game(ScreenBase):
     """pantalla de victoria del juego"""

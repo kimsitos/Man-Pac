@@ -22,7 +22,7 @@ class High_score(ScreenBase):
         self.font = pygame.font.Font(None, 80)
         self.title_font = pygame.font.Font(None, 85)
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
-        self.menu_rect = self.menu_text.get_rect(center=(1200 // 2,1100))
+        self.menu_rect = self.menu_text.get_rect(center=(1400 // 2, 1100))
         self.screen = pygame.display.get_surface()
         background = pygame.image.load(
             "assets/sprites/background_high_score.jpg"
