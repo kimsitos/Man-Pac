@@ -118,6 +118,17 @@ class GameScreen(ScreenBase):
         self.player.direction_x = 0
         self.player.direction_y = 0
 
+        ghosts_pos = [
+            (0 * cell_size, 0 * cell_size),
+            (0 * cell_size, (len(self._maze.get_maze()) - 1) * cell_size),
+            ((len(self._maze.get_maze()[0]) - 1) * cell_size, 0 * cell_size),
+            ((len(self._maze.get_maze()[0]) - 1) * cell_size,
+             (len(self._maze.get_maze()) - 1) * cell_size)
+        ]
+
+        for ghost, pos in zip(self.ghosts, ghosts_pos):
+            ghost.rect.topleft = pos
+
     # Creation of Game Objects
     def _create_entitys(self) -> None:
         self.entitys = pygame.sprite.Group()
