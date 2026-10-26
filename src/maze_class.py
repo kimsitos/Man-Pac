@@ -1,30 +1,33 @@
 from mazegenerator import MazeGenerator
 import pygame
+from src.parse_config_file import Level
 
 
-cell_size = 80
+cell_size = 50
 
 
 class Maze:
     wall_color = (255, 255, 255)
     wall_width = 1
 
-    def __init__(self, seed: int = 0):
-        self._seed = seed
-        self._generator = MazeGenerator(seed=self._seed)
+    def __init__(self, levels: list[Level], seed: int = 0):
+        self.seed = seed
+        self.levels = self._get_new_level(levels)
         self._mask_walls = {
             "North": 1,
             "West": 8,
             "South": 4,
             "East": 2
         }
-        self._draw_maze(self._generator.maze)
+        self.generate_new_maze()
 
     def generate_new_maze(self) -> None:
         """Generates a new maze based on
         the previously given seed
         """
-        self._generator.generate(self._seed)
+        level = next(self.levels)
+        self._generator = MazeGenerator(size=level, seed=self.seed)
+        self._generator.generate()
         self._draw_maze(self._generator.maze)
 
     def get_maze(self) -> list[list[int]]:
@@ -94,6 +97,11 @@ class Maze:
         col = px // cell_size
         cell = self._generator.maze[row][col]
         return (cell & self._mask_walls[direction]) != 0
+
+    @staticmethod
+    def _get_new_level(levels: list[Level]):
+        for level in levels:
+            yield (level.width, level.height)
 
     def _draw_maze(self, maze: list[list[int]]) -> None:
         """

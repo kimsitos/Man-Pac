@@ -1,7 +1,7 @@
 from src.entitys import PacMan, Ghost, Gumpac, SuperGumpac
-# from src.entitys.sprite import Sprite
 from src.screens.screen_base import ScreenBase, ScreenState
 from src.maze_class import Maze, cell_size
+from src.parse_config_file import Parse_Config
 from src import pygame
 import sys
 
@@ -11,12 +11,12 @@ class GameScreen(ScreenBase):
     wall_width = 1
     margin = 8
 
-    def __init__(self):
+    def __init__(self, config: Parse_Config):
         self.state = ScreenState.PLAY
         self.font = pygame.font.Font(None, 50)
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
         self.menu_rect = self.menu_text.get_rect(center=(1300, 50))
-        self._maze = Maze()
+        self._maze = Maze(config.levels)
         self.screen = pygame.display.get_surface()
         self._create_entitys()
 
@@ -40,7 +40,6 @@ class GameScreen(ScreenBase):
 
         self._check_collides()
         self.entitys.update(self._maze)
-
         return True
 
     def change_color_title(self):

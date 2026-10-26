@@ -1,9 +1,9 @@
-//example  
+
 {
     "highscore_filename": "highscores.json",
     "lives": 3,
     "seed": 10,
-    "level_max_time": 180,
+    "level_max_time": 90,
 
     "points_per_pacgum": 10,
     "points_per_super_pacgum": 50,
@@ -19,6 +19,6 @@
         { "width": 21, "height": 21 },
         { "width": 21, "height": 21 },
         { "width": 23, "height": 23 },
-        { "width": 23, "height": 23 }
+        { "width": 5, "height": 3 }
     ]
 }

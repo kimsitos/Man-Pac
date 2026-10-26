@@ -5,14 +5,16 @@ from src.screens.menu_game import Menu_Game
 from src.screens.game_screen import GameScreen
 from src.screens.high_score import High_score
 from src.screens.lost_game import Lost_Game
+from src.parse_config_file import parse_config_file
+import sys
 
 
 class GameScheduler:
     def __init__(self):
         pygame.init()
-        pygame.display.set_mode((1400, 1400))
+        pygame.display.set_mode((1200, 1000))
         self.current_state = ScreenState.MENU.value
-        self.game_screen = GameScreen()
+        self.game_screen = GameScreen(parse_config_file(sys.argv[1]))
         self.screens = {
             ScreenState.MENU.value: Menu(),
             ScreenState.MENU_GAME.value: Menu_Game(),

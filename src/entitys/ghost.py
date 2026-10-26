@@ -12,6 +12,7 @@ class State(Enum):
 
 class Ghost(Entity):
     point_value = 200
+
     def __init__(
         self,
         start_coord: tuple[int, int],
@@ -26,12 +27,10 @@ class Ghost(Entity):
         self._wanted_dir = random.choice(list(Direction))
 
         if self.state == State.EATEABLE:
-            print(pygame.time.get_ticks() - self._start_eatable)
             if pygame.time.get_ticks() - self._start_eatable >= self._duration_eatable:
                 self.state = State.NORMAL
                 self.image = self._original_image
-                print("non Eatable")
-       
+
         super().update(maze)
 
     def is_eatable(self) -> bool:
@@ -39,9 +38,8 @@ class Ghost(Entity):
 
     def make_eatable(self) -> None:
         self._start_eatable = pygame.time.get_ticks()
-        self.image.fill((255,0,0), special_flags=pygame.BLEND_RGBA_MULT)
+        self.image.fill((255, 0, 0), special_flags=pygame.BLEND_RGBA_MULT)
         self.state = State.EATEABLE
-        print("IM EATABLE NOW")
 
     def get_point(self) -> int:
         return self.point_value
