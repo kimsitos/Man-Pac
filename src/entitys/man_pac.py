@@ -4,12 +4,13 @@ import pygame
 
 
 class PacMan(Entity):
+    lives = 3
+
     def __init__(
         self,
         start_coord: tuple[int, int],
             sprite_path: str):
         self.score = 0
-        self.lives = 3
         super().__init__(start_coord, sprite_path)
 
     def update(self, maze: Maze) -> None:
@@ -40,10 +41,11 @@ class PacMan(Entity):
             return True
         return False
 
-    def less_life(self) -> int:
+    def less_life(self) -> bool:
         if self.is_dead():
-            return self.lives
+            return True
         self.lives -= 1
+        return False
 
     def get_lives(self) -> int:
         return self.lives
