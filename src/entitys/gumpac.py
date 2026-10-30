@@ -1,5 +1,4 @@
 import pygame
-from pathlib import Path
 from src.maze_class import cell_size
 
 

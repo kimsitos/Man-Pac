@@ -20,7 +20,7 @@ class Entity(ABC, pygame.sprite.Sprite):
             sprite_path: str):
 
         pygame.sprite.Sprite.__init__(self)
-        self.start_coord = start_coord
+        self.set_new_start_coord(start_coord)
         if not Path(sprite_path).exists():
             raise ValueError(f"Can't access sprite file {sprite_path}")
         self.image: pygame.Surface = pygame.image.load(
@@ -37,6 +37,12 @@ class Entity(ABC, pygame.sprite.Sprite):
         self._velocity = 2
         self._wanted_dir = Direction.NORTH
         self._direction: Direction = self._wanted_dir
+
+    def set_new_start_coord(self, new_start_coord: tuple[int, int]) -> None:
+        x, y = new_start_coord
+        if x < 0 or y < 0:
+            raise ValueError("Position can't be negative")
+        self.start_coord = new_start_coord
 
     def move(self) -> None:
         """Moves the entity based on the assigned direction
@@ -61,7 +67,7 @@ class Entity(ABC, pygame.sprite.Sprite):
         return self.image
 
     def get_coord(self) -> tuple[int, int]:
-        """Returns the coordinate where the sprite is 
+        """Returns the coordinate where the sprite is
 
         Returns
         -------
@@ -73,7 +79,7 @@ class Entity(ABC, pygame.sprite.Sprite):
     def return_to_start(self):
         """Set the position so that it is in the starting position
         """
-        self.rect.x, self.rect.y = self.start_coord
+        self.rect.y, self.rect.x = self.start_coord
 
     @abstractmethod
     def update(self, maze: Maze) -> None:

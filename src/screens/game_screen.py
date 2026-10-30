@@ -3,7 +3,6 @@ from src.screens.screen_base import ScreenBase, ScreenState
 from src.maze_class import Maze, cell_size
 from src.parse_config_file import Parse_Config
 from src import pygame
-import sys
 
 
 class GameScreen(ScreenBase):
@@ -16,8 +15,8 @@ class GameScreen(ScreenBase):
         self.font = pygame.font.Font(None, 50)
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
         self.menu_rect = self.menu_text.get_rect(center=(1300, 50))
-        self._maze = Maze(config.levels)
-        self.screen = pygame.display.get_surface()
+        self._maze = Maze(config.levels, seed=4)
+        self.screen: pygame.Surface = pygame.display.get_surface()
         self._create_entitys()
 
     def event_cacher(self):
@@ -35,8 +34,12 @@ class GameScreen(ScreenBase):
 
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_m]:
+        if len(self.pac_gums) <= 0:
             self.new_game()
+
+        if keys[pygame.K_m]:
+            for gumpac in self.pac_gums:
+                gumpac.kill()
 
         self._check_collides()
         self.entitys.update(self._maze)
@@ -73,8 +76,22 @@ class GameScreen(ScreenBase):
 
     def new_game(self):
         self._maze.generate_new_maze()
-        self._create_entitys()
         self.pac_gums = self._create_pacgums(self._maze.get_maze())
+        self.player.set_new_start_coord((
+            ((len(self._maze.get_maze())) // 2) * cell_size,
+            ((len(self._maze.get_maze()[0])) // 2) * cell_size
+        ))
+
+        maze = self._maze.get_maze()
+        ghosts_pos = [
+            (0 * cell_size, 0 * cell_size),
+            (0 * cell_size, ((len(maze[0]) - 1) * cell_size)),
+            ((len(maze) - 1) * cell_size, 0 * cell_size),
+            ((len(maze) - 1) * cell_size, (len(maze[0]) - 1) * cell_size)
+        ]
+
+        for i, ghost in enumerate(self.ghosts):
+            ghost.set_new_start_coord(ghosts_pos[i])
         self.state = ScreenState.PLAY
 
     def _check_collides(self):
@@ -89,7 +106,8 @@ class GameScreen(ScreenBase):
                     self.player.set_score(ghost.get_point())
                 else:
                     self.player.less_life()
-                    self.restar_position_pacman()
+                    for entity in self.entitys:
+                        entity.return_to_start()
                     if self.player.is_dead():
                         self.state = ScreenState.LOST_GAME
 
@@ -107,38 +125,19 @@ class GameScreen(ScreenBase):
 
             gumpac.kill()
             if len(self.pac_gums) == 0:
-
-                # provisional
-                print("ALL CLEARED")
-                sys.exit()
-
-    def restar_position_pacman(self):
-        self.player.rect.topleft = self.player_start_pos
-        self.player.direction_x = 0
-        self.player.direction_y = 0
-
-        ghosts_pos = [
-            (0 * cell_size, 0 * cell_size),
-            (0 * cell_size, (len(self._maze.get_maze()) - 1) * cell_size),
-            ((len(self._maze.get_maze()[0]) - 1) * cell_size, 0 * cell_size),
-            ((len(self._maze.get_maze()[0]) - 1) * cell_size,
-             (len(self._maze.get_maze()) - 1) * cell_size)
-        ]
-
-        for ghost, pos in zip(self.ghosts, ghosts_pos):
-            ghost.rect.topleft = pos
+                self.new_game()
 
     # Creation of Game Objects
     def _create_entitys(self) -> None:
-        self.entitys = pygame.sprite.Group()
+        self.entitys: pygame.sprite.Group = pygame.sprite.Group()
 
-        self.player_start_pos = (
-            len(self._maze.get_maze()) // 2 * cell_size,
-            len(self._maze.get_maze()[0]) // 2 * cell_size
+        player_start_pos = (
+            ((len(self._maze.get_maze())) // 2) * cell_size,
+            ((len(self._maze.get_maze()[0])) // 2) * cell_size
         )
 
         self.player = PacMan(
-            self.player_start_pos,
+            player_start_pos,
             "assets/sprites/Man-Pac.png"
         )
 
@@ -152,9 +151,9 @@ class GameScreen(ScreenBase):
     def _create_ghosts(maze: list[list[int]]) -> pygame.sprite.Group:
         ghosts_pos = [
             (0 * cell_size, 0 * cell_size),
-            (0 * cell_size, (len(maze) - 1) * cell_size),
-            ((len(maze[0]) - 1) * cell_size, 0 * cell_size),
-            ((len(maze[0]) - 1) * cell_size, (len(maze) - 1) * cell_size)
+            (0 * cell_size, ((len(maze[0]) - 1) * cell_size)),
+            ((len(maze) - 1) * cell_size, 0 * cell_size),
+            ((len(maze) - 1) * cell_size, (len(maze[0]) - 1) * cell_size)
         ]
 
         ghost: pygame.sprite.Group = pygame.sprite.Group()
@@ -187,3 +186,5 @@ class GameScreen(ScreenBase):
             pac_gums.add(supergum)
 
         return pac_gums
+    
+

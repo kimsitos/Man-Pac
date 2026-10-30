@@ -27,7 +27,8 @@ class Ghost(Entity):
         self._wanted_dir = random.choice(list(Direction))
 
         if self.state == State.EATEABLE:
-            if pygame.time.get_ticks() - self._start_eatable >= self._duration_eatable:
+            if (pygame.time.get_ticks() - self._start_eatable
+                    >= self._duration_eatable):
                 self.state = State.NORMAL
                 self.image = self._original_image
 

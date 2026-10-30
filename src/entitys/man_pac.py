@@ -44,7 +44,6 @@ class PacMan(Entity):
         if self.is_dead():
             return self.lives
         self.lives -= 1
-        print(self.lives)
 
     def get_lives(self) -> int:
         return self.lives

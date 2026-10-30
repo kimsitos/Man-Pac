@@ -27,7 +27,6 @@ class Maze:
         """
         level = next(self.levels)
         self._generator = MazeGenerator(size=level, seed=self.seed)
-        self._generator.generate()
         self._draw_maze(self._generator.maze)
 
     def get_maze(self) -> list[list[int]]:
@@ -48,7 +47,7 @@ class Maze:
         Returns
         -------
         pygame.Surface
-            The surface on which the maze is drawn    
+            The surface on which the maze is drawn
         """
         return self._maze_screen
 
@@ -92,10 +91,10 @@ class Maze:
         bool
             True if it intersects a wall, False if it does not intersect a wall
         """
-        px, py = pos
+        py, px = pos
         row = py // cell_size
         col = px // cell_size
-        cell = self._generator.maze[row][col]
+        cell = self._generator.maze[col][row]
         return (cell & self._mask_walls[direction]) != 0
 
     @staticmethod
@@ -114,8 +113,8 @@ class Maze:
             where each bit represents a wall
         """
         self._maze_screen = pygame.Surface(
-            (len(maze) * cell_size + 1,
-             len(maze[0]) * cell_size + 1)
+            (len(maze[0]) * cell_size + 1,
+             len(maze) * cell_size + 1)
         )
         self._maze_screen.fill("black")
         for y in range(0, len(maze)):

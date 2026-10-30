@@ -27,7 +27,7 @@ def parse_config_file(file: str = "config.json") -> Parse_Config | None:
     except FileNotFoundError as e:
         print("\033[91mFile not found Error:\033[0m", e)
     except ValidationError as e:
-       print(f"\033[91mValidation Error:\033[0m {file} file", e)
+        print(f"\033[91mValidation Error:\033[0m {file} file", e)
 
     if not config:
         sys.exit(1)
