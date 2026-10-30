@@ -9,10 +9,10 @@ class Menu_Game(ScreenBase):
         self.state = ScreenState.MENU_GAME
         self.font = pygame.font.Font(None, 120)
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
-        self.menu_rect = self.menu_text.get_rect(center=(600, 890))
+        self.menu_rect = self.menu_text.get_rect(center=(600, 690))
         self.continue_text = self.font.render(
             "Continue", True, (255, 255, 255))
-        self.continue_rect = self.continue_text.get_rect(center=(600, 800))
+        self.continue_rect = self.continue_text.get_rect(center=(600, 600))
         self.screen = pygame.display.get_surface()
         background = pygame.image.load(
             "assets/sprites/background_high_score.jpg"
