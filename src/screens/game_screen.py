@@ -5,6 +5,7 @@ from src.maze_class import Maze, cell_size
 from src.parse_config_file import Parse_Config
 import time
 from src import pygame
+import random
 
 
 class GameScreen(ScreenBase):
@@ -17,10 +18,11 @@ class GameScreen(ScreenBase):
         self.font = pygame.font.Font(None, 50)
         self._maze = Maze(config.levels, seed=4)
         self.screen: pygame.Surface = pygame.display.get_surface()
-        self._create_entitys()
         self.hubs = Hubs(self)
         self.start_time = time.time()
-        self.time_max = 50
+
+        self._create_entitys()
+        self._apply_config(config)
 
     def event_cacher(self):
         """
@@ -71,7 +73,7 @@ class GameScreen(ScreenBase):
         return next_state
 
     def new_game(self):
-        pygame.time.wait(100)
+        pygame.time.wait(200)
         try:
             self._maze.generate_new_maze()
             maze = self._maze.get_maze()
@@ -130,6 +132,14 @@ class GameScreen(ScreenBase):
         if len(self.pac_gums) == 0:
             self.new_game()
 
+    def _apply_config(self, config: Parse_Config) -> None:
+        random.seed(config.seed)
+        self.time_max = config.level_max_time
+        PacMan.lives = config.lives
+        Gumpac.point_value = config.points_per_pacgum
+        SuperGumpac.point_value = config.points_per_super_pacgum
+        Ghost.point_value = config.points_per_ghost
+
     # Creation of Game Objects
     def _create_entitys(self) -> None:
         self.entitys: pygame.sprite.Group = pygame.sprite.Group()
@@ -169,7 +179,6 @@ class GameScreen(ScreenBase):
 
     @staticmethod
     def _create_pacgums(maze: list[list[int]]) -> pygame.sprite.Group:
-        import random
 
         pac_gums: pygame.sprite.Group = pygame.sprite.Group()
         pac_gums.add(Gumpac(
@@ -190,6 +199,7 @@ class GameScreen(ScreenBase):
 
         return pac_gums
 
+    
     def manage_time(self, time_max):
         time_f = time.time()
 
