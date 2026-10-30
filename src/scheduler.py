@@ -4,8 +4,10 @@ from src.screens.menu import Menu
 from src.screens.menu_game import Menu_Game
 from src.screens.game_screen import GameScreen
 from src.screens.high_score import High_score
+from src.screens.win_game import Win_Game
 from src.screens.lost_game import Lost_Game
 from src.parse_config_file import parse_config_file
+
 import sys
 
 
@@ -21,6 +23,7 @@ class GameScheduler:
             ScreenState.PLAY.value: self.game_screen,
             ScreenState.HIGH_SCORE.value: High_score(),
             ScreenState.LOST_GAME.value: Lost_Game(),
+            ScreenState.WIN_GAME.value: Win_Game()
         }
         self.running = True
 

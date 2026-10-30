@@ -75,16 +75,17 @@ class GameScreen(ScreenBase):
         return next_state
 
     def new_game(self):
+        pygame.time.wait(100)
         try:
-            pygame.time.wait(60)
             self._maze.generate_new_maze()
+            maze = self._maze.get_maze()
             self.pac_gums = self._create_pacgums(self._maze.get_maze())
             self.player.set_new_start_coord((
                 ((len(self._maze.get_maze())) // 2) * cell_size,
                 ((len(self._maze.get_maze()[0])) // 2) * cell_size
             ))
+            self.player.return_to_start()
 
-            maze = self._maze.get_maze()
             ghosts_pos = [
                 (0 * cell_size, 0 * cell_size),
                 (0 * cell_size, ((len(maze[0]) - 1) * cell_size)),
@@ -94,9 +95,11 @@ class GameScreen(ScreenBase):
 
             for i, ghost in enumerate(self.ghosts):
                 ghost.set_new_start_coord(ghosts_pos[i])
+                ghost.return_to_start()
             self.state = ScreenState.PLAY
         except StopIteration:
             self.state = ScreenState.WIN_GAME
+        #breakpoint()
 
     def _check_collides(self):
         ghost_detection = pygame.sprite.spritecollide(
@@ -128,8 +131,8 @@ class GameScreen(ScreenBase):
                     ghost.make_eatable()
 
             gumpac.kill()
-            if len(self.pac_gums) == 0:
-                self.new_game()
+        if len(self.pac_gums) == 0:
+            self.new_game()
 
     # Creation of Game Objects
     def _create_entitys(self) -> None:

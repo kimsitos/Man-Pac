@@ -11,6 +11,9 @@ lint:
 	@$(UV_RUN) $(PY_M) flake8 . --exclude=.venv
 	@$(UV_RUN) mypy . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
+debug:
+	@$(UV_RUN) $(PY_M) pdb pac-man.py config.json
+
 clean:
 	@$(PY_M) uv clean
 	@rm -rf .mypy_cache

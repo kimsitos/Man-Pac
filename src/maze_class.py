@@ -1,6 +1,7 @@
 from mazegenerator import MazeGenerator
 import pygame
 from src.parse_config_file import Level
+import pdb
 
 
 cell_size = 50
