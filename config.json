@@ -11,7 +11,7 @@
     
     "levels": [
         { "width": 5, "height": 10 },
-        { "width": 5, "height": 3 },
-        { "width": 23, "height": 23 }
+        { "width": 23, "height": 23 },
+        { "width": 5, "height": 3 }
     ]
 }
