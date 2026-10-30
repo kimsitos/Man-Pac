@@ -1,7 +1,9 @@
 from src.entitys import PacMan, Ghost, Gumpac, SuperGumpac
 from src.screens.screen_base import ScreenBase, ScreenState
+from src.screens.hub_screen import Hubs
 from src.maze_class import Maze, cell_size
 from src.parse_config_file import Parse_Config
+import time
 from src import pygame
 
 
@@ -13,11 +15,12 @@ class GameScreen(ScreenBase):
     def __init__(self, config: Parse_Config):
         self.state = ScreenState.PLAY
         self.font = pygame.font.Font(None, 50)
-        self.menu_text = self.font.render("Menu", True, (255, 255, 255))
-        self.menu_rect = self.menu_text.get_rect(center=(1300, 50))
         self._maze = Maze(config.levels, seed=4)
         self.screen: pygame.Surface = pygame.display.get_surface()
         self._create_entitys()
+        self.hubs = Hubs(self)
+        self.start_time = time.time()
+        self.time_max = 50
 
     def event_cacher(self):
         """
@@ -27,11 +30,6 @@ class GameScreen(ScreenBase):
             if event.type == pygame.QUIT:
                 return False
 
-            if self.state == ScreenState.PLAY:
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.menu_rect.collidepoint(event.pos):
-                        self.state = ScreenState.MENU_GAME
-
         keys = pygame.key.get_pressed()
 
         if len(self.pac_gums) <= 0:
@@ -40,17 +38,16 @@ class GameScreen(ScreenBase):
         if keys[pygame.K_m]:
             for gumpac in self.pac_gums:
                 gumpac.kill()
+        elif keys[pygame.K_ESCAPE]:
+            self.state = ScreenState.MENU_GAME
+        elif keys[pygame.K_1]:
+            self.state = ScreenState.WIN_GAME
+        elif keys[pygame.K_2]:
+            self.state = ScreenState.LOST_GAME
 
         self._check_collides()
         self.entitys.update(self._maze)
         return True
-
-    def change_color_title(self):
-        mouse_pos = pygame.mouse.get_pos()
-
-        self.menu_text = self._render_title(
-            "Menu", self.menu_rect, (255, 255, 0), mouse_pos
-        )
 
     def render(self) -> None:
         """
@@ -60,11 +57,10 @@ class GameScreen(ScreenBase):
         if self.state != ScreenState.PLAY:
             return None
 
-        self.change_color_title()
         self.screen.blit(self._maze.get_screen())
-        self.screen.blit(self.menu_text, self.menu_rect)
         self.pac_gums.draw(self.screen)
         self.entitys.draw(self.screen)
+        self.hubs.render()
 
     def change_screen(self):
         if self.state == ScreenState.PLAY:
