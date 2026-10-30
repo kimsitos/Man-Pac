@@ -20,7 +20,7 @@ class Lost_Game(ScreenBase):
         self.new_score_rect = self.new_score_text.get_rect(center=(600, 800))
         self.screen = pygame.display.get_surface()
         background = pygame.image.load(
-            "assets/sprites/background_lost_game.png"
+            "assets/sprites/background_lost_game.jpg"
         ).convert()
         self.background = pygame.transform.scale(
             background,
