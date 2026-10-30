@@ -18,7 +18,7 @@ class Ghost(Entity):
         start_coord: tuple[int, int],
             sprite_path: str):
         super().__init__(start_coord, sprite_path)
-        self._duration_eatable = 50 * 200
+        self._duration_eatable = 50 * 100
         self._start_eatable = pygame.time.get_ticks()
         self.state = State.NORMAL
         self._original_image = self.image.copy()

@@ -75,24 +75,28 @@ class GameScreen(ScreenBase):
         return next_state
 
     def new_game(self):
-        self._maze.generate_new_maze()
-        self.pac_gums = self._create_pacgums(self._maze.get_maze())
-        self.player.set_new_start_coord((
-            ((len(self._maze.get_maze())) // 2) * cell_size,
-            ((len(self._maze.get_maze()[0])) // 2) * cell_size
-        ))
+        try:
+            pygame.time.wait(60)
+            self._maze.generate_new_maze()
+            self.pac_gums = self._create_pacgums(self._maze.get_maze())
+            self.player.set_new_start_coord((
+                ((len(self._maze.get_maze())) // 2) * cell_size,
+                ((len(self._maze.get_maze()[0])) // 2) * cell_size
+            ))
 
-        maze = self._maze.get_maze()
-        ghosts_pos = [
-            (0 * cell_size, 0 * cell_size),
-            (0 * cell_size, ((len(maze[0]) - 1) * cell_size)),
-            ((len(maze) - 1) * cell_size, 0 * cell_size),
-            ((len(maze) - 1) * cell_size, (len(maze[0]) - 1) * cell_size)
-        ]
+            maze = self._maze.get_maze()
+            ghosts_pos = [
+                (0 * cell_size, 0 * cell_size),
+                (0 * cell_size, ((len(maze[0]) - 1) * cell_size)),
+                ((len(maze) - 1) * cell_size, 0 * cell_size),
+                ((len(maze) - 1) * cell_size, (len(maze[0]) - 1) * cell_size)
+            ]
 
-        for i, ghost in enumerate(self.ghosts):
-            ghost.set_new_start_coord(ghosts_pos[i])
-        self.state = ScreenState.PLAY
+            for i, ghost in enumerate(self.ghosts):
+                ghost.set_new_start_coord(ghosts_pos[i])
+            self.state = ScreenState.PLAY
+        except StopIteration:
+            self.state = ScreenState.WIN_GAME
 
     def _check_collides(self):
         ghost_detection = pygame.sprite.spritecollide(
@@ -102,7 +106,7 @@ class GameScreen(ScreenBase):
         if ghost_detection:
             for ghost in ghost_detection:
                 if ghost.is_eatable():
-                    ghost.kill()
+                    ghost.return_to_start()
                     self.player.set_score(ghost.get_point())
                 else:
                     self.player.less_life()
