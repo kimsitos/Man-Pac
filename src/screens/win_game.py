@@ -95,4 +95,3 @@ class Win_Game(ScreenBase):
             )
 
             self.screen.blit(input_surface, (270, 670))
-
