@@ -195,7 +195,8 @@ class GameScreen(ScreenBase):
 
         if time_f - self.start_time >= time_max:
             self.player.less_life()
-            self.restar_position_pacman()
+            for entity in self.entitys:
+                entity.return_to_start()
             self.start_time = time.time()
             if self.player.is_dead():
                 self.state = ScreenState.LOST_GAME
