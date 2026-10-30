@@ -95,7 +95,7 @@ class GameScreen(ScreenBase):
             self.state = ScreenState.PLAY
         except StopIteration:
             self.state = ScreenState.WIN_GAME
-        #breakpoint()
+        # breakpoint()
 
     def _check_collides(self):
         ghost_detection = pygame.sprite.spritecollide(
@@ -189,23 +189,3 @@ class GameScreen(ScreenBase):
             pac_gums.add(supergum)
 
         return pac_gums
-
-    def manage_time(self, time_max):
-        time_f = time.time()
-
-        if time_f - self.start_time >= time_max:
-            self.player.less_life()
-            self.restar_position_pacman()
-            self.start_time = time.time()
-            if self.player.is_dead():
-                self.state = ScreenState.LOST_GAME
-
-        return int((time_f - self.start_time) - time_max)
-
-    def get_stats(self):
-        time_f = self.manage_time(self.time_max)
-        return {
-            "score": self.player.get_score(),
-            "lives": self.player.get_lives(),
-            "time": time_f,
-        }

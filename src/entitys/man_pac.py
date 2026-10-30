@@ -40,7 +40,7 @@ class PacMan(Entity):
             return True
         return False
 
-    def less_life(self) -> None:
+    def less_life(self) -> int:
         if self.is_dead():
             return self.lives
         self.lives -= 1
