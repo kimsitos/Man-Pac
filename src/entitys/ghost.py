@@ -6,7 +6,7 @@ from enum import Enum, auto
 
 
 class State(Enum):
-    NORMAL = auto()
+    NONEATABLE = auto()
     EATEABLE = auto()
 
 
@@ -20,7 +20,7 @@ class Ghost(Entity):
         super().__init__(start_coord, sprite_path)
         self._duration_eatable = 50 * 100
         self._start_eatable = pygame.time.get_ticks()
-        self.state = State.NORMAL
+        self.state = State.NONEATABLE
         self._original_image = self.image.copy()
 
     def update(self, maze: Maze) -> None:
@@ -29,8 +29,7 @@ class Ghost(Entity):
         if self.state == State.EATEABLE:
             if (pygame.time.get_ticks() - self._start_eatable
                     >= self._duration_eatable):
-                self.state = State.NORMAL
-                self.image = self._original_image
+                self.make_eatable()
 
         super().update(maze)
 
@@ -41,6 +40,10 @@ class Ghost(Entity):
         self._start_eatable = pygame.time.get_ticks()
         self.image.fill((255, 0, 0), special_flags=pygame.BLEND_RGBA_MULT)
         self.state = State.EATEABLE
+
+    def make_inedible(self) -> None:
+        self.state = State.NONEATABLE
+        self.image = self._original_image.copy()
 
     def get_point(self) -> int:
         return self.point_value

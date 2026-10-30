@@ -99,7 +99,7 @@ class GameScreen(ScreenBase):
             self.state = ScreenState.PLAY
         except StopIteration:
             self.state = ScreenState.WIN_GAME
-        #breakpoint()
+        # breakpoint()
 
     def _check_collides(self):
         ghost_detection = pygame.sprite.spritecollide(
@@ -193,5 +193,3 @@ class GameScreen(ScreenBase):
             pac_gums.add(supergum)
 
         return pac_gums
-    
-
