@@ -2,10 +2,10 @@ from pydantic import BaseModel, Field, ValidationError
 import sys
 
 
-class Parse_Config(BaseModel):
+class Config(BaseModel):
     lives: int = Field(gt=0)
     seed: int
-    level_max_time: int = Field(gt=0, le=90, default=90)
+    level_max_time: int = Field(gt=0, default=90)
     points_per_pacgum: int = Field(gt=0, default=10)
     points_per_super_pacgum: int = Field(gt=0, default=20)
     points_per_ghost: int = Field(gt=0, default=50)
@@ -17,11 +17,11 @@ class Level(BaseModel):
     height: int = Field(gt=2)
 
 
-def parse_config_file(file: str = "config.json") -> Parse_Config | None:
+def parse_config_file(file: str = "config.json") -> Config | None:
     config = None
     try:
         with open(file, 'r') as fd:
-            config = Parse_Config.model_validate_json(fd.read())
+            config = Config.model_validate_json(fd.read())
     except PermissionError as e:
         print("\033[91mPermission Error:\033[0m", e)
     except FileNotFoundError as e:

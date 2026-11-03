@@ -18,7 +18,7 @@ class Ghost(Entity):
         start_coord: tuple[int, int],
             sprite_path: str):
         super().__init__(start_coord, sprite_path)
-        self._duration_eatable = 5
+        self._duration_eatable = 5000
         self._start_eatable = pygame.time.get_ticks()
         self.state = State.NONEATABLE
         self._original_image = self.image.copy()
@@ -27,7 +27,6 @@ class Ghost(Entity):
         self._wanted_dir = random.choice(list(Direction))
 
         if self.state == State.EATEABLE:
-            print("IM EATABLE", pygame.time.get_ticks())
             if (pygame.time.get_ticks() - self._start_eatable
                     >= self._duration_eatable):
                 self.make_inedible()

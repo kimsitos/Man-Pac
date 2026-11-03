@@ -2,7 +2,7 @@ from src.entitys import PacMan, Ghost, Gumpac, SuperGumpac
 from src.screens.screen_base import ScreenBase, ScreenState
 from src.screens.hub_screen import Hubs
 from src.maze_class import Maze, cell_size
-from src.parse_config_file import Parse_Config
+from src.parse_config_file import Config
 import time
 from src import pygame
 import random
@@ -13,7 +13,7 @@ class GameScreen(ScreenBase):
     wall_width = 1
     margin = 8
 
-    def __init__(self, config: Parse_Config):
+    def __init__(self, config: Config):
         self.state = ScreenState.PLAY
         self.font = pygame.font.Font(None, 50)
         self._maze = Maze(config.levels, seed=4)
@@ -132,7 +132,7 @@ class GameScreen(ScreenBase):
         if len(self.pac_gums) == 0:
             self.new_game()
 
-    def _apply_config(self, config: Parse_Config) -> None:
+    def _apply_config(self, config: Config) -> None:
         random.seed(config.seed)
         self.time_max = config.level_max_time
         PacMan.lives = config.lives

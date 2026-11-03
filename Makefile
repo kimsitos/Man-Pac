@@ -7,6 +7,9 @@ install:
 run:
 	$(UV_RUN) python3 pac-man.py config.json
 
+run_debug:
+	$(UV_RUN) python3 pac-man.py config.json --debug
+
 lint:
 	@$(UV_RUN) $(PY_M) flake8 . --exclude=.venv
 	@$(UV_RUN) mypy . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
@@ -18,3 +21,5 @@ clean:
 	@$(PY_M) uv clean
 	@rm -rf .mypy_cache
 	rm -rf */__pycache__
+
+.PHONY: install run clean lint lint-strict debug
