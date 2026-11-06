@@ -2,6 +2,7 @@ from src.entitys import PacMan, Ghost, Gumpac, SuperGumpac
 from src.screens.screen_base import ScreenBase, ScreenState
 from src.screens.hub_screen import Hubs
 from src.maze_class import Maze, cell_size
+from src.cheat_mode import Cheat_Mode
 from src.parse_config_file import Config
 import time
 from src import pygame
@@ -15,6 +16,7 @@ class GameScreen(ScreenBase):
 
     def __init__(self, config: Config):
         self.state = ScreenState.PLAY
+        self.cheat = Cheat_Mode()
         self.font = pygame.font.Font(None, 50)
         self._maze = Maze(config.levels, seed=4)
         self.screen: pygame.Surface = pygame.display.get_surface()
@@ -31,10 +33,11 @@ class GameScreen(ScreenBase):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_m:
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_m and self.cheat.enable:
                     for gumpac in self.pac_gums:
                         gumpac.kill()
+            self.cheat.catch_cheat_keys(event)
 
         keys = pygame.key.get_pressed()
 
@@ -46,7 +49,9 @@ class GameScreen(ScreenBase):
             self.state = ScreenState.LOST_GAME
 
         self._check_collides()
-        self.entitys.update(self._maze)
+        self.player.update(self._maze)
+        if not (self.cheat.enable and self.cheat.ghost_freeze):
+            self.ghosts.update(self._maze)
         return True
 
     def render(self) -> None:
@@ -107,7 +112,7 @@ class GameScreen(ScreenBase):
                 if ghost.is_eatable():
                     ghost.return_to_start()
                     self.player.set_score(ghost.get_point())
-                else:
+                elif not (self.cheat.enable and self.cheat.invencibility):
                     self.player.less_life()
                     for entity in self.entitys:
                         entity.return_to_start()
