@@ -12,7 +12,9 @@ import random
 class GameScreen(ScreenBase):
     wall_color = (255, 255, 255)
     wall_width = 1
-    margin = 8
+    margin = 30
+    hud_height = 120
+    min_window_size = (1200, 1000)
 
     def __init__(self, config: Config):
         self.state = ScreenState.PLAY
@@ -74,6 +76,16 @@ class GameScreen(ScreenBase):
         next_state = self.state.value
         self.state = ScreenState.PLAY
         return next_state
+
+    def _resize_to_maze(self):
+        maze_width, maze_height = self._maze.get_screen().get_size()
+        hub_width = self.hubs.get_required_width() + (self.margin * 2)
+        window_width = max(maze_width + (self.margin * 2), hub_width)
+        window_height = maze_height + self.hud_height + self.margin
+
+        self.screen = pygame.display.set_mode((window_width, window_height))
+        self.hubs.screen = self.screen
+        return self.screen
 
     def new_game(self):
         pygame.time.wait(200)
