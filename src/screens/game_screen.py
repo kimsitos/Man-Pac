@@ -31,16 +31,14 @@ class GameScreen(ScreenBase):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_m:
+                    for gumpac in self.pac_gums:
+                        gumpac.kill()
 
         keys = pygame.key.get_pressed()
 
-        if len(self.pac_gums) <= 0:
-            self.new_game()
-
-        if keys[pygame.K_m]:
-            for gumpac in self.pac_gums:
-                gumpac.kill()
-        elif keys[pygame.K_ESCAPE]:
+        if keys[pygame.K_ESCAPE]:
             self.state = ScreenState.MENU_GAME
         elif keys[pygame.K_1]:
             self.state = ScreenState.WIN_GAME
@@ -129,7 +127,8 @@ class GameScreen(ScreenBase):
                     ghost.make_eatable()
 
             gumpac.kill()
-        if len(self.pac_gums) == 0:
+
+        if len(self.pac_gums) <= 0:
             self.new_game()
 
     def _apply_config(self, config: Config) -> None:
@@ -199,7 +198,6 @@ class GameScreen(ScreenBase):
 
         return pac_gums
 
-    
     def manage_time(self, time_max):
         time_f = time.time()
 

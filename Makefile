@@ -7,8 +7,8 @@ install:
 run:
 	$(UV_RUN) python3 pac-man.py config.json
 
-run_debug:
-	$(UV_RUN) python3 pac-man.py config.json --debug
+run_cheat_mode:
+	$(UV_RUN) python3 pac-man.py config.json --cheat_mode
 
 lint:
 	@$(UV_RUN) $(PY_M) flake8 . --exclude=.venv
