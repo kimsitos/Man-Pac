@@ -17,6 +17,7 @@ class High_score(ScreenBase):
     """pantalla de high score"""
 
     def __init__(self):
+        super().__init__()
         self.state = ScreenState.HIGH_SCORE
         self.players = []
         self.font = pygame.font.Font(None, 60)
@@ -36,19 +37,16 @@ class High_score(ScreenBase):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
-            if self.state == ScreenState.HIGH_SCORE:
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.menu_rect.collidepoint(event.pos):
-                        self.state = ScreenState.MENU
+            if self.state == ScreenState.HIGH_SCORE and event.type == pygame.MOUSEBUTTONDOWN:
+                if self.menu_rect.collidepoint(event.pos):
+                    self.request_state_change(ScreenState.MENU)
         return True
 
     def change_screen(self):
-        if self.state == ScreenState.HIGH_SCORE:
-            return None
-
-        next_state = self.state.value
-        self.state = ScreenState.HIGH_SCORE
-        return next_state
+        target = self.consume_pending_state()
+        if target is not None:
+            return target
+        return None
 
     def change_color_title(self):
         mouse_pos = pygame.mouse.get_pos()
@@ -102,6 +100,7 @@ class High_score(ScreenBase):
             self.screen.blit(score_text, (850, y))
 
     def render(self):
+        self.screen = pygame.display.get_surface()
         self.clear_screen()
 
         if self.state == ScreenState.HIGH_SCORE:

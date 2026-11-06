@@ -7,6 +7,7 @@ class Win_Game(ScreenBase):
     """pantalla de victoria del juego"""
 
     def __init__(self):
+        super().__init__()
         self.state = ScreenState.WIN_GAME
         self.writing_name = False
         self.player_name = ""
@@ -34,10 +35,10 @@ class Win_Game(ScreenBase):
             if event.type == pygame.QUIT:
                 return False
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.state == ScreenState.WIN_GAME and event.type == pygame.MOUSEBUTTONDOWN:
                 if self.menu_rect.collidepoint(event.pos):
-                    self.state = ScreenState.MENU
-                if self.new_score_rect.collidepoint(event.pos):
+                    self.request_state_change(ScreenState.MENU)
+                elif self.new_score_rect.collidepoint(event.pos):
                     self.writing_name = True
             if self.writing_name:
                 if event.type == pygame.KEYDOWN:
@@ -45,7 +46,7 @@ class Win_Game(ScreenBase):
                         new_record(
                             Player(name=self.player_name, scored=self.score)
                         )
-                        self.state = ScreenState.MENU
+                        self.request_state_change(ScreenState.MENU)
                     elif event.key == pygame.K_BACKSPACE:
                         self.player_name = self.player_name[:-1]
                     elif len(self.player_name) < 10:
@@ -53,12 +54,10 @@ class Win_Game(ScreenBase):
         return True
 
     def change_screen(self):
-        if self.state == ScreenState.WIN_GAME:
-            return None
-
-        next_state = self.state.value
-        self.state = ScreenState.WIN_GAME
-        return next_state
+        target = self.consume_pending_state()
+        if target is not None:
+            return target
+        return None
 
     def change_color_title(self):
         mouse_pos = pygame.mouse.get_pos()
@@ -71,6 +70,7 @@ class Win_Game(ScreenBase):
         )
 
     def render(self):
+        self.screen = pygame.display.get_surface()
         self.clear_screen()
 
         if self.state == ScreenState.WIN_GAME:

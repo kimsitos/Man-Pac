@@ -6,6 +6,7 @@ class Menu_Game(ScreenBase):
     """pantalla de menu el juego"""
 
     def __init__(self):
+        super().__init__()
         self.state = ScreenState.MENU_GAME
         self.font = pygame.font.Font(None, 120)
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
@@ -26,21 +27,18 @@ class Menu_Game(ScreenBase):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
-            if self.state == ScreenState.MENU_GAME:
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.menu_rect.collidepoint(event.pos):
-                        self.state = ScreenState.MENU
-                    if self.continue_rect.collidepoint(event.pos):
-                        self.state = ScreenState.PLAY
+            if self.state == ScreenState.MENU_GAME and event.type == pygame.MOUSEBUTTONDOWN:
+                if self.menu_rect.collidepoint(event.pos):
+                    self.request_state_change(ScreenState.MENU)
+                elif self.continue_rect.collidepoint(event.pos):
+                    self.request_state_change(ScreenState.PLAY)
         return True
 
     def change_screen(self):
-        if self.state == ScreenState.MENU_GAME:
-            return None
-
-        next_state = self.state.value
-        self.state = ScreenState.MENU_GAME
-        return next_state
+        target = self.consume_pending_state()
+        if target is not None:
+            return target
+        return None
 
     def change_color_title(self):
         mouse_pos = pygame.mouse.get_pos()
@@ -53,6 +51,7 @@ class Menu_Game(ScreenBase):
         )
 
     def render(self):
+        self.screen = pygame.display.get_surface()
         self.clear_screen()
 
         if self.state == ScreenState.MENU_GAME:

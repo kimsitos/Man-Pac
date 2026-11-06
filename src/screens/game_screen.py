@@ -75,6 +75,22 @@ class GameScreen(ScreenBase):
         self.state = ScreenState.PLAY
         return next_state
 
+    def _resize_to_maze(self):
+        maze = self._maze.get_maze()
+        maze_width = len(maze[0]) * cell_size
+        maze_height = len(maze) * cell_size
+        hub_width = self.hubs.get_required_width()
+        min_width = max(maze_width, hub_width + (self.margin * 4))
+        min_height = maze_height + 140
+
+        new_size = (max(min_width, 500), max(min_height, 500))
+        current_size = pygame.display.get_surface().get_size()
+        if current_size != new_size:
+            pygame.display.set_mode(new_size)
+
+        self.screen = pygame.display.get_surface()
+        self.hubs._update_layout()
+
     def new_game(self):
         pygame.time.wait(200)
         try:
@@ -97,6 +113,8 @@ class GameScreen(ScreenBase):
             for i, ghost in enumerate(self.ghosts):
                 ghost.set_new_start_coord(ghosts_pos[i])
                 ghost.return_to_start()
+
+            self._resize_to_maze()
             self.state = ScreenState.PLAY
         except StopIteration:
             self.state = ScreenState.WIN_GAME

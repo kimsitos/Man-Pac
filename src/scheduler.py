@@ -14,8 +14,11 @@ import sys
 class GameScheduler:
     def __init__(self):
         pygame.init()
-        pygame.display.set_mode((1200, 1000))
+        self.default_screen_size = (1200, 1000)
+        pygame.display.set_mode(self.default_screen_size)
         self.current_state = ScreenState.MENU.value
+        self.previous_state = None
+
         self.game_screen = GameScreen(parse_config_file(sys.argv[1]))
         self.screens = {
             ScreenState.MENU.value: Menu(),
@@ -27,10 +30,22 @@ class GameScheduler:
         }
         self.running = True
 
+    def _sync_display_size(self):
+        if self.current_state == self.previous_state:
+            return
+
+        if self.current_state == ScreenState.PLAY.value:
+            self.game_screen._resize_to_maze()
+        else:
+            pygame.display.set_mode(self.default_screen_size)
+
+        self.previous_state = self.current_state
+
     def run(self):
         clock = pygame.time.Clock()
 
         while self.running:
+            self._sync_display_size()
             screen = self.screens[self.current_state]
 
             if not screen.event_cacher():
