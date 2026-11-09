@@ -108,6 +108,7 @@ class GameScreen(ScreenBase):
 
     def _check_collides(self):
         self._ghost_colides()
+
         gumpac_detection = pygame.sprite.spritecollide(
             self.player, self.pac_gums,
             False,
@@ -118,7 +119,8 @@ class GameScreen(ScreenBase):
             self.player.set_score(gumpac.point_value)
             if isinstance(gumpac, SuperGumpac):
                 for ghost in self.ghosts:
-                    ghost.make_eatable()
+                    if not ghost.is_returning_to_base():
+                        ghost.make_eatable()
 
             gumpac.kill()
 
@@ -139,11 +141,15 @@ class GameScreen(ScreenBase):
                 if ghost.is_eatable():
                     ghost.make_return_to_base()
                     self.player.set_score(ghost.get_point())
+                    pygame.time.wait(200)
 
                 elif not (self.cheat.enable and self.cheat.invencibility):
                     self.player.less_life()
                     for entity in self.entitys:
                         entity.return_to_start()
+                        if isinstance(entity, PacMan):
+                            continue
+                        entity.make_inedible()
                     if self.player.is_dead():
                         self.state = ScreenState.LOST_GAME
 

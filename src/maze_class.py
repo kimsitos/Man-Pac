@@ -117,7 +117,6 @@ class Maze:
         maze = self.get_maze()
         rows = len(maze)
         cols = len(maze[0])
-        print("start", start, "end", end, "rows", len(maze), "cols", len(maze[0]))
         distance = [
             [sys.maxsize for _ in range(cols)]
             for _ in range(rows)
