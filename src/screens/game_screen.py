@@ -107,22 +107,7 @@ class GameScreen(ScreenBase):
             self.state = ScreenState.WIN_GAME
 
     def _check_collides(self):
-        ghost_detection = pygame.sprite.spritecollide(
-            self.player, self.ghosts,
-            False,
-            pygame.sprite.collide_circle)
-        if ghost_detection:
-            for ghost in ghost_detection:
-                if ghost.is_eatable():
-                    ghost.return_to_start()
-                    self.player.set_score(ghost.get_point())
-                elif not (self.cheat.enable and self.cheat.invencibility):
-                    self.player.less_life()
-                    for entity in self.entitys:
-                        entity.return_to_start()
-                    if self.player.is_dead():
-                        self.state = ScreenState.LOST_GAME
-
+        self._ghost_colides()
         gumpac_detection = pygame.sprite.spritecollide(
             self.player, self.pac_gums,
             False,
@@ -139,6 +124,28 @@ class GameScreen(ScreenBase):
 
         if len(self.pac_gums) <= 0:
             self.new_level()
+
+    def _ghost_colides(self):
+        ghost_detection = pygame.sprite.spritecollide(
+            self.player, self.ghosts,
+            False,
+            pygame.sprite.collide_circle)
+
+        if ghost_detection:
+            for ghost in ghost_detection:
+                if ghost.is_returning_to_base():
+                    continue
+
+                if ghost.is_eatable():
+                    ghost.make_return_to_base()
+                    self.player.set_score(ghost.get_point())
+
+                elif not (self.cheat.enable and self.cheat.invencibility):
+                    self.player.less_life()
+                    for entity in self.entitys:
+                        entity.return_to_start()
+                    if self.player.is_dead():
+                        self.state = ScreenState.LOST_GAME
 
     def _apply_config(self, config: Config) -> None:
         random.seed(config.seed)

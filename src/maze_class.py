@@ -1,5 +1,7 @@
 from mazegenerator import MazeGenerator
 import pygame
+import sys
+from heapq import heappop, heappush
 from src.parse_config_file import Level
 
 
@@ -96,6 +98,97 @@ class Maze:
         col = px // cell_size
         cell = self._generator.maze[col][row]
         return (cell & self._mask_walls[direction]) != 0
+
+    def shortest_path(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int]
+    ) -> list[tuple[int, int]]:
+
+        psx, psy = start
+        pex, pey = end
+
+        start = (psy // cell_size, psx // cell_size)
+        end = (pey // cell_size, pex // cell_size)
+
+        if start == end:
+            return []
+
+        maze = self.get_maze()
+        rows = len(maze)
+        cols = len(maze[0])
+        print("start", start, "end", end, "rows", len(maze), "cols", len(maze[0]))
+        distance = [
+            [sys.maxsize for _ in range(cols)]
+            for _ in range(rows)
+        ]
+        previous = [
+            [None for _ in range(cols)]
+            for _ in range(rows)
+        ]
+
+        distance[start[0]][start[1]] = 0
+        visited = set()
+        min_heap = [(0, start)]
+
+        while min_heap:
+            current_cost, current = heappop(min_heap)
+            if current in visited:
+                continue
+
+            visited.add(current)
+            if current == end:
+                break
+
+            for neighbour in self._get_neightbour(current):
+                if neighbour in visited:
+                    continue
+
+                nr, nc = neighbour
+                cost = current_cost + 1
+
+                if cost < distance[nr][nc]:
+                    distance[nr][nc] = cost
+                    previous[nr][nc] = current
+
+                    heappush(min_heap, (cost, neighbour))
+
+        if distance[end[0]][end[1]] == sys.maxsize:
+            return []
+        path = []
+        current = end
+
+        while current is not None:
+            path.append(current)
+            row, col = current
+            current = previous[row][col]
+
+        path.reverse()
+
+        return path
+
+    def _get_neightbour(
+        self,
+        cell_pos: tuple[int, int]
+    ) -> list[tuple[int, int]]:
+
+        row, col = cell_pos
+
+        maze = self.get_maze()
+        cell_value = maze[row][col]
+
+        neighbours = []
+
+        if not (cell_value & self._mask_walls["North"]):
+            neighbours.append((row - 1, col))
+        if not (cell_value & self._mask_walls["South"]):
+            neighbours.append((row + 1, col))
+        if not (cell_value & self._mask_walls["West"]):
+            neighbours.append((row, col - 1))
+        if not (cell_value & self._mask_walls["East"]):
+            neighbours.append((row, col + 1))
+
+        return neighbours
 
     @staticmethod
     def _get_new_level(levels: list[Level]):
