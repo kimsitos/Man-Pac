@@ -1,7 +1,6 @@
 
 {
-    "lives": 7,
-    "seed": 10,
+    "lives": 2,
     "level_max_time": 20,
 
     "points_per_pacgum": 10,

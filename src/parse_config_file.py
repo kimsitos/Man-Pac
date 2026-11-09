@@ -4,7 +4,7 @@ import sys
 
 class Config(BaseModel):
     lives: int = Field(gt=0)
-    seed: int
+    seed: int = Field(default=0)
     level_max_time: int = Field(gt=0, default=90)
     points_per_pacgum: int = Field(gt=0, default=10)
     points_per_super_pacgum: int = Field(gt=0, default=20)

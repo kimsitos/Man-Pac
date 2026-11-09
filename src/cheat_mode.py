@@ -11,7 +11,6 @@ class Cheat_Mode:
                        for argv in sys.argv)
                        else False)
 
-        print(self.enable)
 
     def catch_cheat_keys(self, event: pygame.event.Event) -> None:
         if event.type == pygame.KEYUP:
