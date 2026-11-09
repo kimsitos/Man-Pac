@@ -36,13 +36,13 @@ class Ghost(Entity):
         elif self.is_returning_to_base():
             if not self.return_path:
                 self.return_path = self._set_return_path(maze)
-                print(self.return_path)
-            
-            if self._wanted_dir is None:
-                self._wanted_dir = self.return_path.pop(0)
-            if not self.return_path:
-                self.make_inedible()
 
+            if maze.is_centered_in_cell(self.get_coord()):
+                try:
+                    self._wanted_dir = self.return_path.pop(0)
+                except IndexError:
+                    self._wanted_dir = random.choice(list(Direction))
+                    self.make_inedible()
 
         super().update(maze)
 

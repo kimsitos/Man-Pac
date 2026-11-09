@@ -92,7 +92,6 @@ class Entity(ABC, pygame.sprite.Sprite):
             where each bit represents a wall
         """
         if maze.is_centered_in_cell(self.get_coord()):
-
             if not maze.intersect_wall(
                 self.get_coord(),
                 self._wanted_dir.value
