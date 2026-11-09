@@ -8,15 +8,16 @@ from src.screens.screen_base import ScreenBase, ScreenState
 
 
 class Player(BaseModel):
-    """Representa un jugador para registros."""
+    """Represents a player record for the leaderboard."""
     name: str
     scored: int
 
 
 class High_score(ScreenBase):
-    """pantalla de high score"""
+    """Screen with the top scores leaderboard."""
 
     def __init__(self):
+        """Load the background and prepare the score list."""
         super().__init__()
         self.state = ScreenState.HIGH_SCORE
         self.players = []
@@ -34,28 +35,33 @@ class High_score(ScreenBase):
         )
 
     def event_cacher(self):
+        """Handle clicks on the back-to-menu button."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
-            if self.state == ScreenState.HIGH_SCORE and event.type == pygame.MOUSEBUTTONDOWN:
-                if self.menu_rect.collidepoint(event.pos):
-                    self.request_state_change(ScreenState.MENU)
+            if self.state == ScreenState.HIGH_SCORE:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.menu_rect.collidepoint(event.pos):
+                        self.request_state_change(ScreenState.MENU)
         return True
 
     def change_screen(self):
+        """Return the screen change queued by the menu click."""
         target = self.consume_pending_state()
         if target is not None:
             return target
         return None
 
     def change_color_title(self):
+        """Highlight the menu button while the mouse is over it."""
         mouse_pos = pygame.mouse.get_pos()
 
-        self.menu_text = self._render_title(
+        self.menu_text = self.render_title(
             "Menu", self.menu_rect, (255, 255, 0), mouse_pos
         )
 
     def render_high_scores(self):
+        """Draw the ordered ranking of the best results."""
         title = self.title_font.render(
             "TOP 10 SCORES",
             True,
@@ -100,6 +106,7 @@ class High_score(ScreenBase):
             self.screen.blit(score_text, (850, y))
 
     def render(self):
+        """Draw the background, leaderboard, and return button."""
         self.screen = pygame.display.get_surface()
         self.clear_screen()
 
@@ -111,7 +118,7 @@ class High_score(ScreenBase):
 
 
 def new_record(new: Player):
-    """Insert new score."""
+    """Insert a new score."""
 
     players = load_players("high_scores.json")
     players.append(new)
@@ -125,7 +132,7 @@ def new_record(new: Player):
 
 
 def load_players(path: str) -> list[Player]:
-    """Load and validate players."""
+    """Load and validate player records."""
 
     data = _load_json(path)
 
@@ -143,7 +150,7 @@ def load_players(path: str) -> list[Player]:
 
 
 def _load_json(path: str) -> list[dict]:
-    """Load a JSON file."""
+    """Load a JSON file from disk."""
 
     try:
         with open(path, encoding="utf-8") as file:
@@ -164,7 +171,7 @@ def _load_json(path: str) -> list[dict]:
 
 
 def _write_json(players: list[Player]):
-    """ Write generated function calls to JSON."""
+    """Write the leaderboard to the JSON file."""
 
     output_path = Path("high_scores.json")
 

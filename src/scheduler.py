@@ -13,6 +13,9 @@ import sys
 
 class GameScheduler:
     def __init__(self):
+        """
+            Initialize the game loop and the default screen state.
+        """
         pygame.init()
         self.default_screen_size = (1200, 1000)
         pygame.display.set_mode(self.default_screen_size)
@@ -31,6 +34,9 @@ class GameScheduler:
         self.running = True
 
     def _sync_display_size(self):
+        """
+        Resize only when a screen transition actually changes state.
+        """
         if self.current_state == self.previous_state:
             return
 
@@ -42,6 +48,9 @@ class GameScheduler:
         self.previous_state = self.current_state
 
     def run(self):
+        """
+        Main loop: process input, apply transitions, and render frames.
+        """
         clock = pygame.time.Clock()
 
         while self.running:
@@ -52,6 +61,7 @@ class GameScheduler:
                 self.running = False
                 break
             next_state = screen.change_screen()
+            print(f"{screen} ---- {next_state}")
             if next_state is not None and next_state in self.screens:
                 if (
                     next_state == ScreenState.MENU.value

@@ -4,9 +4,10 @@ import pygame
 
 
 class Lost_Game(ScreenBase):
-    """pantalla de menu el juego"""
+    """Defeat screen with save-score and return-to-menu options."""
 
     def __init__(self):
+        """Initialize the defeat screen and its buttons."""
         super().__init__()
         self.state = ScreenState.LOST_GAME
         self.writing_name = False
@@ -29,10 +30,14 @@ class Lost_Game(ScreenBase):
         )
 
     def event_cacher(self):
+        """Handle clicks and keyboard input to return or save the score."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
-            if self.state == ScreenState.LOST_GAME and event.type == pygame.MOUSEBUTTONDOWN:
+            if (
+                self.state == ScreenState.LOST_GAME
+                and event.type == pygame.MOUSEBUTTONDOWN
+            ):
                 if self.menu_rect.collidepoint(event.pos):
                     self.request_state_change(ScreenState.MENU)
                 elif self.new_score_rect.collidepoint(event.pos):
@@ -51,22 +56,25 @@ class Lost_Game(ScreenBase):
         return True
 
     def change_screen(self):
+        """Process the pending state change for the defeat screen."""
         target = self.consume_pending_state()
         if target is not None:
             return target
         return None
 
     def change_color_title(self):
+        """Highlight the option under the mouse cursor."""
         mouse_pos = pygame.mouse.get_pos()
 
-        self.menu_text = self._render_title(
+        self.menu_text = self.render_title(
             "Menu", self.menu_rect, (255, 255, 0), mouse_pos
         )
-        self.new_score_text = self._render_title(
+        self.new_score_text = self.render_title(
             "New Score", self.new_score_rect, (255, 255, 0), mouse_pos
         )
 
     def render(self):
+        """Draw the defeat screen and the name input field when needed."""
         self.screen = pygame.display.get_surface()
         self.clear_screen()
 

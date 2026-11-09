@@ -4,9 +4,10 @@ import pygame
 
 
 class Win_Game(ScreenBase):
-    """pantalla de victoria del juego"""
+    """Victory screen with score submission and return-to-menu actions."""
 
     def __init__(self):
+        """Initialize the victory screen and its buttons."""
         super().__init__()
         self.state = ScreenState.WIN_GAME
         self.writing_name = False
@@ -31,15 +32,17 @@ class Win_Game(ScreenBase):
         )
 
     def event_cacher(self):
+        """Handle clicks and keyboard input to continue or save the score."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
 
-            if self.state == ScreenState.WIN_GAME and event.type == pygame.MOUSEBUTTONDOWN:
-                if self.menu_rect.collidepoint(event.pos):
-                    self.request_state_change(ScreenState.MENU)
-                elif self.new_score_rect.collidepoint(event.pos):
-                    self.writing_name = True
+            if self.state == ScreenState.WIN_GAME:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.menu_rect.collidepoint(event.pos):
+                        self.request_state_change(ScreenState.MENU)
+                    elif self.new_score_rect.collidepoint(event.pos):
+                        self.writing_name = True
             if self.writing_name:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
@@ -54,22 +57,25 @@ class Win_Game(ScreenBase):
         return True
 
     def change_screen(self):
+        """Return the destination screen after the chosen action."""
         target = self.consume_pending_state()
         if target is not None:
             return target
         return None
 
     def change_color_title(self):
+        """Change the hovered text color for visual feedback."""
         mouse_pos = pygame.mouse.get_pos()
 
-        self.menu_text = self._render_title(
+        self.menu_text = self.render_title(
             "Menu", self.menu_rect, (255, 255, 0), mouse_pos
         )
-        self.new_score_text = self._render_title(
+        self.new_score_text = self.render_title(
             "New Score", self.new_score_rect, (255, 255, 0), mouse_pos
         )
 
     def render(self):
+        """Draw the win screen, buttons, and player name input."""
         self.screen = pygame.display.get_surface()
         self.clear_screen()
 

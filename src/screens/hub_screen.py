@@ -2,9 +2,16 @@ import pygame
 
 
 class Hubs:
-    """Representa las stats debajo del juego."""
+    """
+    Manage the in-game HUD shown below the maze.
+
+    This class keeps the score, lives, and timer aligned in a single row and
+    updates the layout whenever the window size changes or the values change.
+    """
 
     def __init__(self, game_screen):
+        """
+        Store the parent screen and initialize the HUD text and layout."""
         self.game_screen = game_screen
         self.screen = pygame.display.get_surface()
         self.font = pygame.font.Font(None, 50)
@@ -16,15 +23,26 @@ class Hubs:
         self.time_rect = self.time_text.get_rect()
         self._update_layout()
 
+    def _get_total_width(self):
+        """Return the total width of the HUD texts and their gaps."""
+        texts = [self.score_text, self.lives_text, self.time_text]
+        gap = 30
+        return sum(text.get_width() for text in texts) + gap * (
+            len(texts) - 1
+        )
+
     def _update_layout(self):
+        """
+        Recalculate the HUD positions so the three labels remain centered
+        and readable on the current screen size.
+        """
         self.screen = pygame.display.get_surface()
         if self.screen is None:
             return
 
-        texts = [self.score_text, self.lives_text, self.time_text]
         gap = 30
-        total_width = sum(text.get_width() for text in texts) + gap * (len(texts) - 1)
-        start_x = max((self.screen.get_width() - total_width) // 2, 20)
+        total_width = self._get_total_width()
+        start_x = max((self.screen.get_width() - total_width) // 2, 25)
         y = self.screen.get_height() - 60
 
         current_x = start_x
@@ -35,11 +53,18 @@ class Hubs:
         self.time_rect = self.time_text.get_rect(midleft=(current_x, y))
 
     def get_required_width(self):
-        texts = [self.score_text, self.lives_text, self.time_text]
-        gap = 30
-        return sum(text.get_width() for text in texts) + gap * (len(texts) - 1)
+        """
+        Return the minimum horizontal space needed by the HUD.
+
+        This value is used to resize the game window so the maze and the HUD
+        can coexist without clipping or overlapping.
+        """
+        return self._get_total_width()
 
     def render(self):
+        """
+        Refresh the HUD values from the game state and draw them on screen.
+        """
         stats = self.game_screen.get_stats()
         self.score_text = self.font.render(
             f"score {stats['score']}", True, (255, 255, 255)
