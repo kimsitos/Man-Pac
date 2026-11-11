@@ -52,7 +52,8 @@ class GameScreen(ScreenBase):
         self._check_collides()
         self.player.update(self._maze)
         if not (self.cheat.enable and self.cheat.ghost_freeze):
-            self.ghosts.update(self._maze)
+            dist_map = self._maze.dist_map(self.player.get_coord())
+            self.ghosts.update(self._maze, dist_map=dist_map)
         return True
 
     def render(self) -> None:
@@ -141,7 +142,7 @@ class GameScreen(ScreenBase):
                 if ghost.is_eatable():
                     ghost.make_return_to_base()
                     self.player.set_score(ghost.get_point())
-                    pygame.time.wait(200)
+                    pygame.time.wait(150)
 
                 elif not (self.cheat.enable and self.cheat.invencibility):
                     self.player.less_life()

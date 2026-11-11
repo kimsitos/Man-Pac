@@ -99,6 +99,11 @@ class Maze:
         cell = self._generator.maze[col][row]
         return (cell & self._mask_walls[direction]) != 0
 
+    def dist_map(self, start: tuple[int, int]) -> list[list[int]]:
+        x, y = start
+        distance, _ = self._explore((y // cell_size, x // cell_size))
+        return distance
+
     def shortest_path(
         self,
         start: tuple[int, int],
@@ -114,43 +119,7 @@ class Maze:
         if start == end:
             return []
 
-        maze = self.get_maze()
-        rows = len(maze)
-        cols = len(maze[0])
-        distance = [
-            [sys.maxsize for _ in range(cols)]
-            for _ in range(rows)
-        ]
-        previous = [
-            [None for _ in range(cols)]
-            for _ in range(rows)
-        ]
-
-        distance[start[0]][start[1]] = 0
-        visited = set()
-        min_heap = [(0, start)]
-
-        while min_heap:
-            current_cost, current = heappop(min_heap)
-            if current in visited:
-                continue
-
-            visited.add(current)
-            if current == end:
-                break
-
-            for neighbour in self._get_neightbour(current):
-                if neighbour in visited:
-                    continue
-
-                nr, nc = neighbour
-                cost = current_cost + 1
-
-                if cost < distance[nr][nc]:
-                    distance[nr][nc] = cost
-                    previous[nr][nc] = current
-
-                    heappush(min_heap, (cost, neighbour))
+        distance, previous = self._explore(start)
 
         if distance[end[0]][end[1]] == sys.maxsize:
             return []
@@ -166,7 +135,7 @@ class Maze:
 
         return path
 
-    def _get_neightbour(
+    def get_neightbour(
         self,
         cell_pos: tuple[int, int]
     ) -> list[tuple[int, int]]:
@@ -186,8 +155,48 @@ class Maze:
             neighbours.append((row, col - 1))
         if not (cell_value & self._mask_walls["East"]):
             neighbours.append((row, col + 1))
+        print(neighbours)
 
         return neighbours
+
+    def _explore(self, start: tuple[int, int]
+                 ) -> tuple[list[list[int]], list[list[int | None]]]:
+        maze = self.get_maze()
+        rows = len(maze)
+        cols = len(maze[0])
+        distance = [
+            [sys.maxsize for _ in range(cols)]
+            for _ in range(rows)
+        ]
+        previous: list[list[int | None]] = [
+            [None for _ in range(cols)]
+            for _ in range(rows)
+        ]
+
+        distance[start[0]][start[1]] = 0
+        visited = set()
+        min_heap = [(0, start)]
+
+        while min_heap:
+            current_cost, current = heappop(min_heap)
+            if current in visited:
+                continue
+
+            visited.add(current)
+
+            for neighbour in self.get_neightbour(current):
+                if neighbour in visited:
+                    continue
+
+                nr, nc = neighbour
+                cost = current_cost + 1
+
+                if cost < distance[nr][nc]:
+                    distance[nr][nc] = cost
+                    previous[nr][nc] = current
+                    heappush(min_heap, (cost, neighbour))
+
+        return distance, previous
 
     @staticmethod
     def _get_new_level(levels: list[Level]):

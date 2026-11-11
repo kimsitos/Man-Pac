@@ -1,5 +1,5 @@
 from entitys.entity_base import Entity, Direction
-from src.maze_class import Maze
+from src.maze_class import Maze, cell_size
 import random
 import pygame
 from enum import Enum, auto
@@ -25,8 +25,12 @@ class Ghost(Entity):
         self._original_image = self.image.copy()
         self.return_path: list[Direction] = []
 
-    def update(self, maze: Maze) -> None:
-        self._wanted_dir = random.choice(list(Direction))
+    def update(self, maze: Maze, dist_map: list[list[int]]) -> None:
+        if (maze.is_centered_in_cell(self.get_coord())
+                and not self.is_returning_to_base()):
+            self._wanted_dir = self.next_move(maze, dist_map)
+            if self.state == State.NONEATABLE:
+                self._wanted_dir = random.choice([self._wanted_dir, random.choice(list(Direction))])
 
         if self.state == State.EATEABLE:
             if (pygame.time.get_ticks() - self._start_eatable
@@ -45,6 +49,24 @@ class Ghost(Entity):
                     self.make_inedible()
 
         super().update(maze)
+
+    def next_move(self, maze: Maze, dist_map: list[list[int]]) -> Direction:
+        def dist(cell: tuple[int, int]) -> int:
+            return dist_map[cell[0]][cell[1]]
+
+        x, y = self.get_coord()
+        row, col = y // cell_size, x // cell_size
+        neightbour_cells = maze.get_neightbour((row, col))
+
+        maze_map = maze.get_maze()
+        object_cell = maze_map[row][col]
+        if self.state == State.EATEABLE:
+            object_cell = max(neightbour_cells, key=dist)
+        elif self.state == State.NONEATABLE:
+            object_cell = min(neightbour_cells, key=dist)
+
+
+        return self._path_to_directions([(row, col), object_cell])[0]
 
     def is_eatable(self) -> bool:
         return self.state == State.EATEABLE
