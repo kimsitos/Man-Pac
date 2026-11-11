@@ -30,7 +30,9 @@ class Ghost(Entity):
                 and not self.is_returning_to_base()):
             self._wanted_dir = self.next_move(maze, dist_map)
             if self.state == State.NONEATABLE:
-                self._wanted_dir = random.choice([self._wanted_dir, random.choice(list(Direction))])
+                self._wanted_dir = random.choice(
+                    [self._wanted_dir, random.choice(list(Direction))]
+                )
 
         if self.state == State.EATEABLE:
             if (pygame.time.get_ticks() - self._start_eatable
