@@ -237,7 +237,7 @@ class GameScreen(ScreenBase):
         for y in range(len(maze)):
             for x in range(len(maze[y])):
                 if maze[y][x] != 15:
-                    if (x, y) in super_gumpac_pos:
+                    if (y, x) in super_gumpac_pos:
                         pac_gums.add(SuperGumpac(
                             (
                                 (x * cell_size) + (cell_size // 4),
