@@ -78,6 +78,23 @@ class GameScreen(ScreenBase):
         self.state = ScreenState.PLAY
         return next_state
 
+    def _resize_to_maze(self):
+        """Adjust the window to fit the maze, leaving room for the HUDv"""
+        maze = self._maze.get_maze()
+        maze_width = len(maze[0]) * cell_size
+        maze_height = len(maze) * cell_size
+        hub_width = self.hubs.get_required_width()
+        min_width = max(maze_width, hub_width + (self.margin * 4))
+        min_height = maze_height + 140
+
+        new_size = (max(min_width, 500), max(min_height, 500))
+        current_size = pygame.display.get_surface().get_size()
+        if current_size != new_size:
+            pygame.display.set_mode(new_size)
+
+        self.screen = pygame.display.get_surface()
+        self.hubs._update_layout()
+
     def new_game(self):
         self._maze = Maze(self.config.levels, self.config.seed)
         self._create_entitys()

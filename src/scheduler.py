@@ -66,7 +66,7 @@ class GameScheduler:
                     next_state == ScreenState.PLAY.value
                     and self.current_state == ScreenState.MENU.value
                 ):
-                    self.game_screen.start_timer()
+                    self.game_screen.start_time
                 if (
                     next_state == ScreenState.MENU.value
                     and self.current_state
