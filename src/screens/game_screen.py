@@ -121,6 +121,9 @@ class GameScreen(ScreenBase):
             for i, ghost in enumerate(self.ghosts):
                 ghost.set_new_start_coord(ghosts_pos[i])
                 ghost.return_to_start()
+
+            self._resize_to_maze()
+            self.state = ScreenState.PLAY
         except StopIteration:
             self.new_game()
             self.state = ScreenState.WIN_GAME
