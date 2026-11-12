@@ -105,10 +105,14 @@ class GameScreen(ScreenBase):
             self._maze.generate_new_maze()
             maze = self._maze.get_maze()
             self.pac_gums = self._create_pacgums(self._maze.get_maze())
-            self.player.set_new_start_coord((
-                ((len(self._maze.get_maze())) // 2) * cell_size,
-                ((len(self._maze.get_maze()[0])) // 2) * cell_size
-            ))
+
+            row, col = len(maze) // 2, len(maze[0]) // 2
+            print(row, col)
+            while maze[row][col] == 15:
+                col -= 1
+            self.player.set_new_start_coord(
+                (row * cell_size, col * cell_size)
+            )
             self.player.return_to_start()
 
             ghosts_pos = [
@@ -186,14 +190,15 @@ class GameScreen(ScreenBase):
     # Creation of Game Objects
     def _create_entitys(self) -> None:
         self.entitys: pygame.sprite.Group = pygame.sprite.Group()
+        maze = self._maze.get_maze()
 
-        player_start_pos = (
-            ((len(self._maze.get_maze())) // 2) * cell_size,
-            ((len(self._maze.get_maze()[0])) // 2) * cell_size
-        )
+        row, col = len(maze) // 2, len(maze[0]) // 2
+        print(row, col)
+        while maze[row][col] == 15:
+            row -= 1
 
         self.player = PacMan(
-            player_start_pos,
+            (row * cell_size, col * cell_size),
             "assets/sprites/Man-Pac.png"
         )
 
