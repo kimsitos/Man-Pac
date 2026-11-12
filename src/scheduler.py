@@ -61,8 +61,12 @@ class GameScheduler:
                 self.running = False
                 break
             next_state = screen.change_screen()
-            print(f"{screen} ---- {next_state}")
             if next_state is not None and next_state in self.screens:
+                if (
+                    next_state == ScreenState.PLAY.value
+                    and self.current_state == ScreenState.MENU.value
+                ):
+                    self.game_screen.start_timer()
                 if (
                     next_state == ScreenState.MENU.value
                     and self.current_state

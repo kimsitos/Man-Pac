@@ -10,7 +10,7 @@ import random
 
 
 class GameScreen(ScreenBase):
-    """Pantalla principal del juego: laberinto, jugador, fantasmas y HUD."""
+    """Main game screen, including the maze, player, ghosts, and HUD."""
 
     wall_color = (255, 255, 255)
     wall_width = 1
@@ -19,7 +19,7 @@ class GameScreen(ScreenBase):
     min_window_size = (1200, 1000)
 
     def __init__(self, config: Config):
-        """Inicializa el laberinto, entidades y el nivel actual."""
+        """Initialize the maze, game entities, and current level."""
         super().__init__()
         self.state = ScreenState.PLAY
         self.cheat = Cheat_Mode()
@@ -32,6 +32,10 @@ class GameScreen(ScreenBase):
         self._create_entitys()
         self.config = config
         self._apply_config(config)
+
+    def start_timer(self) -> None:
+        """Start the game timer when gameplay begins."""
+        self.start_time = time.time()
 
     def event_cacher(self):
         """Handle input, collisions, and gameplay state changes."""
@@ -60,7 +64,7 @@ class GameScreen(ScreenBase):
         return True
 
     def render(self) -> None:
-        """Dibuja el laberinto, los puntos, los personajes y el HUD."""
+        """Draw the maze, collectibles, characters, and HUD."""
         self.clear_screen()
         if self.state != ScreenState.PLAY:
             return None
@@ -71,7 +75,7 @@ class GameScreen(ScreenBase):
         self.hubs.render()
 
     def change_screen(self):
-        """Return the requested transition if the game has left PLAY."""
+        """Return the requested screen transition, if any."""
         target = self.consume_pending_state()
         if target is None:
             return None
@@ -80,7 +84,7 @@ class GameScreen(ScreenBase):
         return target
 
     def _resize_to_maze(self):
-        """Adjust the window to fit the maze, leaving room for the HUDv"""
+        """Resize the window to fit the maze and HUD."""
         maze = self._maze.get_maze()
         maze_width = len(maze[0]) * cell_size
         maze_height = len(maze) * cell_size
@@ -107,7 +111,7 @@ class GameScreen(ScreenBase):
         return self.screen
 
     def new_game(self):
-        """Regenera el laberinto y reinicia al jugador y fantasmas."""
+        """Generate a new maze and reset the player and ghosts."""
         self._maze = Maze(self.config.levels, self.config.seed)
         self._create_entitys()
 
@@ -141,7 +145,7 @@ class GameScreen(ScreenBase):
         # breakpoint()
 
     def _check_collides(self):
-        """Comprueba choques con fantasmas y goms para ganar o perder."""
+        """Handle collisions with ghosts and collectibles."""
         ghost_detection = pygame.sprite.spritecollide(
             self.player, self.ghosts,
             False,
@@ -176,7 +180,7 @@ class GameScreen(ScreenBase):
             self.new_level()
 
     def _apply_config(self, config: Config) -> None:
-        """Aplica el tiempo, vidas y valores de puntuación del nivel."""
+        """Apply the configured time limit, lives, and score values."""
         random.seed(config.seed)
         self.time_max = config.level_max_time
         PacMan.lives = config.lives
@@ -186,7 +190,7 @@ class GameScreen(ScreenBase):
 
     # Creation of Game Objects
     def _create_entitys(self) -> None:
-        """Crea al jugador, fantasmas y puntos del laberinto actual."""
+        """Create the player, ghosts, and collectibles for the current maze."""
         self.entitys: pygame.sprite.Group = pygame.sprite.Group()
 
         player_start_pos = (
@@ -207,7 +211,7 @@ class GameScreen(ScreenBase):
 
     @staticmethod
     def _create_ghosts(maze: list[list[int]]) -> pygame.sprite.Group:
-        """Genera los cuatro fantasmas en las esquinas del laberinto."""
+        """Create four ghosts, one at each corner of the maze."""
         ghosts_pos = [
             (0 * cell_size, 0 * cell_size),
             (0 * cell_size, ((len(maze[0]) - 1) * cell_size)),
@@ -225,9 +229,7 @@ class GameScreen(ScreenBase):
 
     @staticmethod
     def _create_pacgums(maze: list[list[int]]) -> pygame.sprite.Group:
-        """
-        Create the maze points and mark some as superpoints.
-        """
+        """Create maze collectibles and replace some with super collectibles."""
 
         pac_gums: pygame.sprite.Group = pygame.sprite.Group()
         pac_gums.add(Gumpac(
@@ -250,7 +252,7 @@ class GameScreen(ScreenBase):
 
     def manage_time(self, time_max):
         """
-        This function manages the game's time flow
+        Update the game timer and handle time-limit penalties.
         """
         time_f = time.time()
 
@@ -266,7 +268,7 @@ class GameScreen(ScreenBase):
 
     def get_stats(self):
         """
-        This function returns the game statistics
+        Return the current score, lives, and remaining time.
         """
         time_f = self.manage_time(self.time_max)
         return {

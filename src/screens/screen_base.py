@@ -51,7 +51,6 @@ class ScreenBase(ABC):
         This function sends a request to the system to switch
           to another screen
         """
-        print(f"Se ha solicitado un cambio de patalla a {next_state}")
         if next_state is not None and self.pending_state is None:
             self.pending_state = next_state
 
