@@ -10,17 +10,11 @@ import random
 
 
 class GameScreen(ScreenBase):
-    """Main game screen, including the maze, player, ghosts, and HUD."""
-
     wall_color = (255, 255, 255)
     wall_width = 1
-    margin = 30
-    hud_height = 120
-    min_window_size = (1200, 1000)
+    margin = 8
 
     def __init__(self, config: Config):
-        """Initialize the maze, game entities, and current level."""
-        super().__init__()
         self.state = ScreenState.PLAY
         self.cheat = Cheat_Mode()
         self.font = pygame.font.Font(None, 50)
@@ -33,17 +27,16 @@ class GameScreen(ScreenBase):
         self.config = config
         self._apply_config(config)
 
-    def start_timer(self) -> None:
-        """Start the game timer when gameplay begins."""
-        self.start_time = time.time()
-
     def event_cacher(self):
-        """Handle input, collisions, and gameplay state changes."""
+        """
+        Processes keyboard events
+        """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_m and self.cheat.enable:
+                    print("Level skipped")
                     for gumpac in self.pac_gums:
                         gumpac.kill()
             self.cheat.catch_cheat_keys(event)
@@ -51,20 +44,23 @@ class GameScreen(ScreenBase):
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_ESCAPE]:
-            self.request_state_change(ScreenState.MENU_GAME)
+            self.state = ScreenState.MENU_GAME
         elif keys[pygame.K_1]:
-            self.request_state_change(ScreenState.WIN_GAME)
+            self.state = ScreenState.WIN_GAME
         elif keys[pygame.K_2]:
-            self.request_state_change(ScreenState.LOST_GAME)
+            self.state = ScreenState.LOST_GAME
 
         self._check_collides()
         self.player.update(self._maze)
         if not (self.cheat.enable and self.cheat.ghost_freeze):
-            self.ghosts.update(self._maze)
+            dist_map = self._maze.dist_map(self.player.get_coord())
+            self.ghosts.update(self._maze, dist_map=dist_map)
         return True
 
     def render(self) -> None:
-        """Draw the maze, collectibles, characters, and HUD."""
+        """
+        Renders the maze.
+        """
         self.clear_screen()
         if self.state != ScreenState.PLAY:
             return None
@@ -75,43 +71,14 @@ class GameScreen(ScreenBase):
         self.hubs.render()
 
     def change_screen(self):
-        """Return the requested screen transition, if any."""
-        target = self.consume_pending_state()
-        if target is None:
+        if self.state == ScreenState.PLAY:
             return None
 
+        next_state = self.state.value
         self.state = ScreenState.PLAY
-        return target
-
-    def _resize_to_maze(self):
-        """Resize the window to fit the maze and HUD."""
-        maze = self._maze.get_maze()
-        maze_width = len(maze[0]) * cell_size
-        maze_height = len(maze) * cell_size
-        hub_width = self.hubs.get_required_width()
-        min_width = max(maze_width, hub_width + (self.margin * 4))
-        min_height = maze_height + 140
-
-        new_size = (max(min_width, 500), max(min_height, 500))
-        current_size = pygame.display.get_surface().get_size()
-        if current_size != new_size:
-            pygame.display.set_mode(new_size)
-
-        self.screen = pygame.display.get_surface()
-        self.hubs._update_layout()
-
-    def _resize_to_maze(self):
-        maze_width, maze_height = self._maze.get_screen().get_size()
-        hub_width = self.hubs.get_required_width() + (self.margin * 2)
-        window_width = max(maze_width + (self.margin * 2), hub_width)
-        window_height = maze_height + self.hud_height + self.margin
-
-        self.screen = pygame.display.set_mode((window_width, window_height))
-        self.hubs.screen = self.screen
-        return self.screen
+        return next_state
 
     def new_game(self):
-        """Generate a new maze and reset the player and ghosts."""
         self._maze = Maze(self.config.levels, self.config.seed)
         self._create_entitys()
 
@@ -137,30 +104,12 @@ class GameScreen(ScreenBase):
             for i, ghost in enumerate(self.ghosts):
                 ghost.set_new_start_coord(ghosts_pos[i])
                 ghost.return_to_start()
-
-            self._resize_to_maze()
-            self.state = ScreenState.PLAY
         except StopIteration:
-            self.request_state_change(ScreenState.WIN_GAME)
-        # breakpoint()
+            self.new_game()
+            self.state = ScreenState.WIN_GAME
 
     def _check_collides(self):
-        """Handle collisions with ghosts and collectibles."""
-        ghost_detection = pygame.sprite.spritecollide(
-            self.player, self.ghosts,
-            False,
-            pygame.sprite.collide_circle)
-        if ghost_detection:
-            for ghost in ghost_detection:
-                if ghost.is_eatable():
-                    ghost.return_to_start()
-                    self.player.set_score(ghost.get_point())
-                elif not (self.cheat.enable and self.cheat.invencibility):
-                    self.player.less_life()
-                    for entity in self.entitys:
-                        entity.return_to_start()
-                    if self.player.is_dead():
-                        self.request_state_change(ScreenState.LOST_GAME)
+        self._ghost_colides()
 
         gumpac_detection = pygame.sprite.spritecollide(
             self.player, self.pac_gums,
@@ -172,15 +121,41 @@ class GameScreen(ScreenBase):
             self.player.set_score(gumpac.point_value)
             if isinstance(gumpac, SuperGumpac):
                 for ghost in self.ghosts:
-                    ghost.make_eatable()
+                    if not ghost.is_returning_to_base():
+                        ghost.make_eatable()
 
             gumpac.kill()
 
         if len(self.pac_gums) <= 0:
             self.new_level()
 
+    def _ghost_colides(self):
+        ghost_detection = pygame.sprite.spritecollide(
+            self.player, self.ghosts,
+            False,
+            pygame.sprite.collide_circle)
+
+        if ghost_detection:
+            for ghost in ghost_detection:
+                if ghost.is_returning_to_base():
+                    continue
+
+                if ghost.is_eatable():
+                    ghost.make_return_to_base()
+                    self.player.set_score(ghost.get_point())
+                    pygame.time.wait(150)
+
+                elif not (self.cheat.enable and self.cheat.invencibility):
+                    self.player.less_life()
+                    for entity in self.entitys:
+                        entity.return_to_start()
+                        if isinstance(entity, PacMan):
+                            continue
+                        entity.make_inedible()
+                    if self.player.is_dead():
+                        self.state = ScreenState.LOST_GAME
+
     def _apply_config(self, config: Config) -> None:
-        """Apply the configured time limit, lives, and score values."""
         random.seed(config.seed)
         self.time_max = config.level_max_time
         PacMan.lives = config.lives
@@ -190,7 +165,6 @@ class GameScreen(ScreenBase):
 
     # Creation of Game Objects
     def _create_entitys(self) -> None:
-        """Create the player, ghosts, and collectibles for the current maze."""
         self.entitys: pygame.sprite.Group = pygame.sprite.Group()
 
         player_start_pos = (
@@ -211,7 +185,6 @@ class GameScreen(ScreenBase):
 
     @staticmethod
     def _create_ghosts(maze: list[list[int]]) -> pygame.sprite.Group:
-        """Create four ghosts, one at each corner of the maze."""
         ghosts_pos = [
             (0 * cell_size, 0 * cell_size),
             (0 * cell_size, ((len(maze[0]) - 1) * cell_size)),
@@ -229,31 +202,34 @@ class GameScreen(ScreenBase):
 
     @staticmethod
     def _create_pacgums(maze: list[list[int]]) -> pygame.sprite.Group:
-        """Create maze collectibles and replace some with super collectibles."""
-
+        super_gumpac_pos = [
+            (0, 0),
+            (0, ((len(maze[0]) - 1))),
+            ((len(maze) - 1), 0),
+            ((len(maze) - 1), (len(maze[0]) - 1))
+        ]
         pac_gums: pygame.sprite.Group = pygame.sprite.Group()
-        pac_gums.add(Gumpac(
-            (
-                (x * cell_size) + (cell_size // 4),
-                (y * cell_size) + (cell_size // 4)
-            ))
-            for y in range(len(maze))
-            for x in range(len(maze[y]))
-            if maze[y][x] != 15
-        )
-
-        for _ in range(4):
-            gum = random.choice(pac_gums.sprites())
-            pac_gums.remove(gum)
-            supergum = SuperGumpac(gum.rect.topleft)
-            pac_gums.add(supergum)
+        for y in range(len(maze)):
+            for x in range(len(maze[y])):
+                if maze[y][x] != 15:
+                    if (x, y) in super_gumpac_pos:
+                        pac_gums.add(SuperGumpac(
+                            (
+                                (x * cell_size) + (cell_size // 4),
+                                (y * cell_size) + (cell_size // 4)
+                            ))
+                        )
+                    else:
+                        pac_gums.add(Gumpac(
+                            (
+                                (x * cell_size) + (cell_size // 4),
+                                (y * cell_size) + (cell_size // 4)
+                            ))
+                        )
 
         return pac_gums
 
     def manage_time(self, time_max):
-        """
-        Update the game timer and handle time-limit penalties.
-        """
         time_f = time.time()
 
         if time_f - self.start_time >= time_max:
@@ -267,9 +243,6 @@ class GameScreen(ScreenBase):
         return int((time_f - self.start_time) - time_max)
 
     def get_stats(self):
-        """
-        Return the current score, lives, and remaining time.
-        """
         time_f = self.manage_time(self.time_max)
         return {
             "score": self.player.get_score(),
