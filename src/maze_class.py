@@ -155,7 +155,6 @@ class Maze:
             neighbours.append((row, col - 1))
         if not (cell_value & self._mask_walls["East"]):
             neighbours.append((row, col + 1))
-        print(neighbours)
 
         return neighbours
 

@@ -36,6 +36,7 @@ class GameScreen(ScreenBase):
                 return False
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_m and self.cheat.enable:
+                    print("Level skipped")
                     for gumpac in self.pac_gums:
                         gumpac.kill()
             self.cheat.catch_cheat_keys(event)
@@ -201,23 +202,30 @@ class GameScreen(ScreenBase):
 
     @staticmethod
     def _create_pacgums(maze: list[list[int]]) -> pygame.sprite.Group:
-
+        super_gumpac_pos = [
+            (0, 0),
+            (0, ((len(maze[0]) - 1))),
+            ((len(maze) - 1), 0),
+            ((len(maze) - 1), (len(maze[0]) - 1))
+        ]
         pac_gums: pygame.sprite.Group = pygame.sprite.Group()
-        pac_gums.add(Gumpac(
-            (
-                (x * cell_size) + (cell_size // 4),
-                (y * cell_size) + (cell_size // 4)
-            ))
-            for y in range(len(maze))
-            for x in range(len(maze[y]))
-            if maze[y][x] != 15
-        )
-
-        for _ in range(4):
-            gum = random.choice(pac_gums.sprites())
-            pac_gums.remove(gum)
-            supergum = SuperGumpac(gum.rect.topleft)
-            pac_gums.add(supergum)
+        for y in range(len(maze)):
+            for x in range(len(maze[y])):
+                if maze[y][x] != 15:
+                    if (x, y) in super_gumpac_pos:
+                        pac_gums.add(SuperGumpac(
+                            (
+                                (x * cell_size) + (cell_size // 4),
+                                (y * cell_size) + (cell_size // 4)
+                            ))
+                        )
+                    else:
+                        pac_gums.add(Gumpac(
+                            (
+                                (x * cell_size) + (cell_size // 4),
+                                (y * cell_size) + (cell_size // 4)
+                            ))
+                        )
 
         return pac_gums
 

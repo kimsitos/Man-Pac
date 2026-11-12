@@ -28,11 +28,10 @@ class Ghost(Entity):
     def update(self, maze: Maze, dist_map: list[list[int]]) -> None:
         if (maze.is_centered_in_cell(self.get_coord())
                 and not self.is_returning_to_base()):
-            self._wanted_dir = self.next_move(maze, dist_map)
-            if self.state == State.NONEATABLE:
-                self._wanted_dir = random.choice(
-                    [self._wanted_dir, random.choice(list(Direction))]
-                )
+            self._wanted_dir = random.choice(
+                [self.next_move(maze, dist_map),
+                 random.choice(list(Direction))]
+            )
 
         if self.state == State.EATEABLE:
             if (pygame.time.get_ticks() - self._start_eatable
@@ -67,7 +66,6 @@ class Ghost(Entity):
         elif self.state == State.NONEATABLE:
             object_cell = min(neightbour_cells, key=dist)
 
-
         return self._path_to_directions([(row, col), object_cell])[0]
 
     def is_eatable(self) -> bool:
@@ -92,7 +90,7 @@ class Ghost(Entity):
     def make_return_to_base(self):
         self.state = State.RETURN_TO_BASE
         self.image = self._original_image.copy()
-        self.image.fill((0, 0, 255), special_flags=pygame.BLEND_RGBA_MULT)
+        self.image.fill((100, 50, 255), special_flags=pygame.BLEND_RGBA_MULT)
 
     def _set_return_path(self, maze: Maze) -> list[Direction]:
         y, x = self.start_coord
