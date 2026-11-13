@@ -265,7 +265,7 @@ class GameScreen(ScreenBase):
             if self.player.is_dead():
                 self.state = ScreenState.LOST_GAME
 
-        return int((time_f - self.start_time) - time_max)
+        return abs(int((time_f - self.start_time) - time_max))
 
     def get_stats(self):
         time_f = self.manage_time(self.time_max)
