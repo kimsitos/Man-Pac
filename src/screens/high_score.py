@@ -131,6 +131,12 @@ def new_record(new: Player):
     _write_json(players[:10])
 
 
+def is_high_score(score: int) -> bool:
+    """Return whether a score beats the current lowest leaderboard entry."""
+    players = load_players("high_scores.json")
+    return not players or score > min(player.scored for player in players)
+
+
 def load_players(path: str) -> list[Player]:
     """Load and validate player records."""
 

@@ -62,6 +62,13 @@ class GameScheduler:
                 break
             next_state = screen.change_screen()
             if next_state is not None and next_state in self.screens:
+                if next_state in {
+                    ScreenState.WIN_GAME.value,
+                    ScreenState.LOST_GAME.value,
+                }:
+                    self.screens[next_state].score = (
+                        self.game_screen.player.get_score()
+                    )
                 if (
                     next_state == ScreenState.PLAY.value
                     and self.current_state == ScreenState.MENU.value
@@ -73,6 +80,8 @@ class GameScheduler:
                     in {
                         ScreenState.MENU_GAME.value,
                         ScreenState.LOST_GAME.value,
+                        ScreenState.WIN_GAME.value,
+                        ScreenState.HIGH_SCORE.value,
                     }
                 ):
                     self.game_screen.new_game()

@@ -22,7 +22,7 @@ class GameScreen(ScreenBase):
         self.screen: pygame.Surface = pygame.display.get_surface()
         self.hubs = Hubs(self)
         self.start_time = time.time()
-
+        self.level = 1
         self._create_entitys()
         self.config = config
         self._apply_config(config)
@@ -84,8 +84,8 @@ class GameScreen(ScreenBase):
         maze_width = len(maze[0]) * cell_size
         maze_height = len(maze) * cell_size
         hub_width = self.hubs.get_required_width()
-        min_width = max(maze_width, hub_width + (self.margin * 4))
-        min_height = maze_height + 140
+        min_width = max(maze_width, hub_width)
+        min_height = maze_height + 160
 
         new_size = (max(min_width, 500), max(min_height, 500))
         current_size = pygame.display.get_surface().get_size()
@@ -97,6 +97,7 @@ class GameScreen(ScreenBase):
 
     def new_game(self):
         self._maze = Maze(self.config.levels, self.config.seed)
+        self.level = 1
         self._create_entitys()
 
     def new_level(self):
@@ -105,7 +106,7 @@ class GameScreen(ScreenBase):
             self._maze.generate_new_maze()
             maze = self._maze.get_maze()
             self.pac_gums = self._create_pacgums(self._maze.get_maze())
-
+            self.level += 1
             row, col = len(maze) // 2, len(maze[0]) // 2
             print(row, col)
             while maze[row][col] == 15:
@@ -129,7 +130,6 @@ class GameScreen(ScreenBase):
             self._resize_to_maze()
             self.state = ScreenState.PLAY
         except StopIteration:
-            self.new_game()
             self.state = ScreenState.WIN_GAME
 
     def _check_collides(self):
@@ -273,4 +273,5 @@ class GameScreen(ScreenBase):
             "score": self.player.get_score(),
             "lives": self.player.get_lives(),
             "time": time_f,
+            "level": self.level,
         }
