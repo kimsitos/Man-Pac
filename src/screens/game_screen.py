@@ -108,7 +108,6 @@ class GameScreen(ScreenBase):
             self.pac_gums = self._create_pacgums(self._maze.get_maze())
             self.level += 1
             row, col = len(maze) // 2, len(maze[0]) // 2
-            print(row, col)
             while maze[row][col] == 15:
                 col -= 1
             self.player.set_new_start_coord(
@@ -193,7 +192,6 @@ class GameScreen(ScreenBase):
         maze = self._maze.get_maze()
 
         row, col = len(maze) // 2, len(maze[0]) // 2
-        print(row, col)
         while maze[row][col] == 15:
             row -= 1
 
