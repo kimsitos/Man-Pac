@@ -1,11 +1,19 @@
 import pygame
 from src.maze_class import cell_size
+from pathlib import Path
+import sys
 
 
 class Gumpac(pygame.sprite.Sprite):
-    image: pygame.Surface = pygame.image.load(
-        "assets/sprites/Gumpac.png"
-    )
+    sprite_path = "assets/sprites/Gumpac.png"
+    try:
+        image: pygame.Surface = pygame.image.load(
+            sprite_path
+        )
+    except FileNotFoundError as e:
+        print("\033[91mFile not found Error:\033[0m", e)
+        sys.exit(1)
+
     image = pygame.transform.scale(
         image,
         (cell_size // 2, cell_size // 2)
@@ -25,9 +33,15 @@ class Gumpac(pygame.sprite.Sprite):
 
 class SuperGumpac(Gumpac):
     point_value = 100
-    image: pygame.Surface = pygame.image.load(
-        "assets/sprites/SuperGumpac.png"
-    )
+    sprite_path = "assets/sprites/SuperGumpac.png"
+    try:
+        image: pygame.Surface = pygame.image.load(
+            sprite_path
+        )
+    except FileNotFoundError as e:
+        print("\033[91mFile not found Error:\033[0m", e)
+        sys.exit(1)
+
     image = pygame.transform.scale(
         image,
         (cell_size // 2, cell_size // 2)
