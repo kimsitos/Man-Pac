@@ -22,7 +22,7 @@ class Entity(ABC, pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.set_new_start_coord(start_coord)
         if not Path(sprite_path).exists():
-            raise ValueError(f"Can't access sprite file {sprite_path}")
+            raise FileNotFoundError(f"Can't access sprite file {sprite_path}")
         self.image: pygame.Surface = pygame.image.load(
             sprite_path
         )

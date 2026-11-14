@@ -22,7 +22,12 @@ class GameScheduler:
         self.current_state = ScreenState.MENU.value
         self.previous_state = None
 
-        self.game_screen = GameScreen(parse_config_file(sys.argv[1]))
+        try:
+            self.game_screen = GameScreen(parse_config_file(sys.argv[1]))
+        except IndexError:
+            print("\033[91mFile not found Error:\033[0m", "Insert config file")
+            sys.exit(1)
+
         self.screens = {
             ScreenState.MENU.value: Menu(),
             ScreenState.MENU_GAME.value: Menu_Game(),
