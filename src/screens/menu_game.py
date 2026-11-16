@@ -25,7 +25,7 @@ class Menu_Game(ScreenBase):
             self.screen.get_size()
         )
 
-    def event_cacher(self) -> bool:
+    def event_cacher(self) -> Any:
         """Handle clicks to continue the game or return to the menu."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

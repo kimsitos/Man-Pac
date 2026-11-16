@@ -20,7 +20,7 @@ class High_score(ScreenBase):
         """Load the background and prepare the score list."""
         super().__init__()
         self.state = ScreenState.HIGH_SCORE
-        self.players = list[Player]
+        self.players = [Player]
         self.font = pygame.font.Font(None, 60)
         self.title_font = pygame.font.Font(None, 80)
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
@@ -137,7 +137,7 @@ def is_high_score(score: int) -> bool:
     return not players or score > min(player.scored for player in players)
 
 
-def load_players(path: str) -> list[Player]:
+def load_players(path: str) -> list[Any]:
     """Load and validate player records."""
 
     data = _load_json(path)

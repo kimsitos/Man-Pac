@@ -22,7 +22,7 @@ class Win_Game(ScreenBase):
         self.Check_text = self.lit.render(
             "Check top 10", True, (255, 255, 255))
         self.Check_rect = self.Check_text.get_rect(center=(1050, 950))
-        self.win_text = self.font.render("You Win!", True, (255, 255, 255))
+        self.win_text = self.font.render("You Win!", True, (124, 252, 0))
         self.win_rect = self.win_text.get_rect(center=(600, 200))
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
         self.menu_rect = self.menu_text.get_rect(center=(600, 900))

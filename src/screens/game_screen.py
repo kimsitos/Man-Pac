@@ -103,6 +103,7 @@ class GameScreen(ScreenBase):
     def new_level(self) -> None:
         pygame.time.wait(200)
         try:
+
             self._maze.generate_new_maze()
             maze = self._maze.get_maze()
             self.pac_gums = self._create_pacgums(self._maze.get_maze())
