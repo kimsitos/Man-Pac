@@ -19,6 +19,9 @@ class Lost_Game(ScreenBase):
         self.lit = pygame.font.Font(None, 50)
         self.input_font = pygame.font.Font(None, 100)
         self.font = pygame.font.Font(None, 120)
+        self.score_text = self.lit.render(
+            f"Score: {self.score}", True, (0, 0, 0))
+        self.score_rect = self.score_text.get_rect(center=(600, 250))
         self.check_text = self.lit.render(
             "Check top 10", True, (255, 255, 255))
         self.check_rect = self.check_text.get_rect(center=(1050, 950))
@@ -100,6 +103,8 @@ class Lost_Game(ScreenBase):
         self.check_text = self.lit.render(
             "Check top 10", True, check_color
         )
+        self.score_text = self.lit.render(
+            f"Score: {self.score}", True, (0, 0, 0))
 
     def render(self) -> None:
         """Draw the defeat screen and the name input field when needed."""
@@ -111,7 +116,7 @@ class Lost_Game(ScreenBase):
             self.screen.blit(self.background, (0, 0))
 
             self.change_color_title()
-
+            self.screen.blit(self.score_text, self.score_rect)
             self.screen.blit(self.menu_text, self.menu_rect)
             self.screen.blit(self.check_text, self.check_rect)
 
