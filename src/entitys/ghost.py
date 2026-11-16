@@ -22,7 +22,7 @@ class Ghost(Entity):
         self._duration_eatable = 5000
         self._start_eatable = pygame.time.get_ticks()
         self.state = State.NONEATABLE
-        self._original_image = self.image.copy()
+        self._original_image: pygame.Surface = self.image.copy()
         self.return_path: list[Direction] = []
 
     def update(self, maze: Maze, dist_map: list[list[int]]) -> None:
@@ -87,7 +87,7 @@ class Ghost(Entity):
     def get_point(self) -> int:
         return self.point_value
 
-    def make_return_to_base(self):
+    def make_return_to_base(self) -> None:
         self.state = State.RETURN_TO_BASE
         self.image = self._original_image.copy()
         self.image.fill((100, 50, 255), special_flags=pygame.BLEND_RGBA_MULT)

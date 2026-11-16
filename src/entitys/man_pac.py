@@ -36,7 +36,7 @@ class PacMan(Entity):
     def get_score(self) -> int:
         return self.score
 
-    def is_dead(self):
+    def is_dead(self) -> bool:
         if self.lives <= 0:
             return True
         return False

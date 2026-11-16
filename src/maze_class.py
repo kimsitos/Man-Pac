@@ -3,6 +3,7 @@ import pygame
 import sys
 from heapq import heappop, heappush
 from src.parse_config_file import Level
+from typing import Iterator
 
 
 cell_size = 50
@@ -41,7 +42,8 @@ class Maze:
             Maze grid. Each cell is a 4-bit mask (from 0 to 15)
             where each bit represents a wall
         """
-        return self._generator.maze
+        maze: list[list[int]] = self._generator.maze
+        return maze
 
     def get_screen(self) -> pygame.Surface:
         """Returns the surface on which the maze is drawn
@@ -97,7 +99,7 @@ class Maze:
         row = py // cell_size
         col = px // cell_size
         cell = self._generator.maze[col][row]
-        return (cell & self._mask_walls[direction]) != 0
+        return bool((cell & self._mask_walls[direction]) != 0)
 
     def dist_map(self, start: tuple[int, int]) -> list[list[int]]:
         x, y = start
@@ -123,8 +125,8 @@ class Maze:
 
         if distance[end[0]][end[1]] == sys.maxsize:
             return []
-        path = []
-        current = end
+        path: list[tuple[int, int]] = []
+        current: tuple[int, int] | None = end
 
         while current is not None:
             path.append(current)
@@ -159,7 +161,8 @@ class Maze:
         return neighbours
 
     def _explore(self, start: tuple[int, int]
-                 ) -> tuple[list[list[int]], list[list[int | None]]]:
+                 ) -> tuple[list[list[int]],
+                            list[list[tuple[int, int] | None]]]:
         maze = self.get_maze()
         rows = len(maze)
         cols = len(maze[0])
@@ -167,7 +170,7 @@ class Maze:
             [sys.maxsize for _ in range(cols)]
             for _ in range(rows)
         ]
-        previous: list[list[int | None]] = [
+        previous: list[list[tuple[int, int] | None]] = [
             [None for _ in range(cols)]
             for _ in range(rows)
         ]
@@ -198,7 +201,7 @@ class Maze:
         return distance, previous
 
     @staticmethod
-    def _get_new_level(levels: list[Level]):
+    def _get_new_level(levels: list[Level]) -> Iterator[tuple[int, int]]:
         for level in levels:
             yield (level.width, level.height)
 

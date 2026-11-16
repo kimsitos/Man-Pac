@@ -76,7 +76,7 @@ class Entity(ABC, pygame.sprite.Sprite):
         """
         return (self.rect.x, self.rect.y)
 
-    def return_to_start(self):
+    def return_to_start(self) -> None:
         """Set the position so that it is in the starting position
         """
         self.rect.y, self.rect.x = self.start_coord

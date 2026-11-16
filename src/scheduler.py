@@ -12,7 +12,7 @@ import sys
 
 
 class GameScheduler:
-    def __init__(self):
+    def __init__(self) -> None:
         """
             Initialize the game loop and the default screen state.
         """
@@ -23,7 +23,9 @@ class GameScheduler:
         self.previous_state = None
 
         try:
-            self.game_screen = GameScreen(parse_config_file(sys.argv[1]))
+            self.game_screen: GameScreen = GameScreen(
+                parse_config_file(sys.argv[1])
+                )
         except IndexError:
             print("\033[91mFile not found Error:\033[0m", "Insert config file")
             sys.exit(1)
@@ -38,7 +40,7 @@ class GameScheduler:
         }
         self.running = True
 
-    def _sync_display_size(self):
+    def _sync_display_size(self) -> None:
         """
         Resize only when a screen transition actually changes state.
         """
@@ -52,7 +54,7 @@ class GameScheduler:
 
         self.previous_state = self.current_state
 
-    def run(self):
+    def run(self) -> None:
         """
         Main loop: process input, apply transitions, and render frames.
         """

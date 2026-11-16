@@ -3,25 +3,25 @@ from src.maze_class import cell_size
 import sys
 
 
-class Gumpac(pygame.sprite.Sprite):
-    sprite_path = "assets/sprites/Gumpac.png"
+def load_sprite(path: str) -> pygame.Surface:
     try:
-        image: pygame.Surface = pygame.image.load(
-            sprite_path
+        image = pygame.image.load(path)
+        return pygame.transform.scale(
+            image,
+            (cell_size // 2, cell_size // 2)
         )
-    except FileNotFoundError as e:
-        print("\033[91mFile not found Error:\033[0m", e)
+    except FileNotFoundError as error:
+        print("\033[91mFile not found Error:\033[0m", error)
         sys.exit(1)
 
-    image = pygame.transform.scale(
-        image,
-        (cell_size // 2, cell_size // 2)
-    )
+
+class Gumpac(pygame.sprite.Sprite):
+    image = load_sprite("assets/sprites/Gumpac.png")
     point_value = 50
 
     def __init__(self, position: tuple[int, int]):
         super().__init__()
-        self.image = self.image
+        self.image = type(self).image
         self.rect: pygame.Rect = self.image.get_rect()
         self.rect.x, self.rect.y = position
         self.radius = self.rect.width // 2 - 4
@@ -32,19 +32,7 @@ class Gumpac(pygame.sprite.Sprite):
 
 class SuperGumpac(Gumpac):
     point_value = 100
-    sprite_path = "assets/sprites/SuperGumpac.png"
-    try:
-        image: pygame.Surface = pygame.image.load(
-            sprite_path
-        )
-    except FileNotFoundError as e:
-        print("\033[91mFile not found Error:\033[0m", e)
-        sys.exit(1)
-
-    image = pygame.transform.scale(
-        image,
-        (cell_size // 2, cell_size // 2)
-    )
+    image = load_sprite("assets/sprites/SuperGumpac.png")
 
     def __init__(self, position: tuple[int, int]):
         super().__init__(position)
