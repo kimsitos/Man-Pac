@@ -18,6 +18,8 @@ class Cheat_Mode:
             print("I - Activate/Deactivate invencibility")
 
     def catch_cheat_keys(self, event: pygame.event.Event) -> None:
+        if not self.enable:
+            return
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_g:
                 self.ghost_freeze = not self.ghost_freeze
