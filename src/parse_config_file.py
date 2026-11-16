@@ -17,7 +17,7 @@ class Config(BaseModel):
     levels: list[Level]
 
 
-def parse_config_file(file: str = "config.json") -> Config | None:
+def parse_config_file(file: str = "config.json") -> Config:
     config = None
     try:
         with open(file, 'r') as fd:

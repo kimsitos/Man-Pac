@@ -6,7 +6,7 @@ class Cheat_Mode:
     invencibility: bool = False
     ghost_freeze: bool = False
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.enable = (True if "--cheat_mode" in (argv.lower()
                        for argv in sys.argv)
                        else False)
