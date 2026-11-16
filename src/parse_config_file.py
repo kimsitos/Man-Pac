@@ -3,8 +3,8 @@ import sys
 
 
 class Level(BaseModel):
-    width: int = Field(gt=2)
-    height: int = Field(gt=2)
+    width: int = Field(gt=2, default=15)
+    height: int = Field(gt=2, default=15)
 
 
 class Config(BaseModel):
@@ -14,14 +14,23 @@ class Config(BaseModel):
     points_per_pacgum: int = Field(gt=0, default=10)
     points_per_super_pacgum: int = Field(gt=0, default=20)
     points_per_ghost: int = Field(gt=0, default=50)
-    levels: list[Level]
+    levels: list[Level] = Field(min_length=10, default=[
+        Level() for _ in range(10)
+        ])
 
 
 def parse_config_file(file: str = "config.json") -> Config:
     config = None
     try:
         with open(file, 'r') as fd:
-            config = Config.model_validate_json(fd.read())
+            final_str = ""
+            for line in fd:
+                temp_line = line.strip()
+                if not temp_line or temp_line.startswith("#"):
+                    continue
+                final_str += line
+
+            config = Config.model_validate_json(final_str)
     except PermissionError as e:
         print("\033[91mPermission Error:\033[0m", e)
     except FileNotFoundError as e:
