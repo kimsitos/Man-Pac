@@ -1,5 +1,3 @@
-from pydoc import text
-
 from src.screens.screen_base import ScreenBase, ScreenState
 from src.screens.high_score import is_high_score, new_record, Player
 import pygame
@@ -115,7 +113,7 @@ class Win_Game(ScreenBase):
             self.screen.blit(self.win_text, self.win_rect)
             self.screen.blit(self.menu_text, self.menu_rect)
             self.screen.blit(self.Check_text, self.Check_rect)
-            
+
         if self.can_add_score:
             self.screen.blit(self.new_score_text, self.new_score_rect)
         if self.writing_name:

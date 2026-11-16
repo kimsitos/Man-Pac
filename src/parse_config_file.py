@@ -2,6 +2,11 @@ from pydantic import BaseModel, Field, ValidationError
 import sys
 
 
+class Level(BaseModel):
+    width: int = Field(gt=2)
+    height: int = Field(gt=2)
+
+
 class Config(BaseModel):
     lives: int = Field(gt=0)
     seed: int = Field(default=0)
@@ -10,11 +15,6 @@ class Config(BaseModel):
     points_per_super_pacgum: int = Field(gt=0, default=20)
     points_per_ghost: int = Field(gt=0, default=50)
     levels: list[Level]
-
-
-class Level(BaseModel):
-    width: int = Field(gt=2)
-    height: int = Field(gt=2)
 
 
 def parse_config_file(file: str = "config.json") -> Config | None:
