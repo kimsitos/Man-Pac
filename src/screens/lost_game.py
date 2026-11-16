@@ -1,12 +1,13 @@
 from src.screens.screen_base import ScreenBase, ScreenState
 from src.screens.high_score import is_high_score, new_record, Player
+from typing import Any
 import pygame
 
 
 class Lost_Game(ScreenBase):
     """Defeat screen with save-score and return-to-menu options."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the defeat screen and its buttons."""
         super().__init__()
         self.state = ScreenState.LOST_GAME
@@ -35,7 +36,7 @@ class Lost_Game(ScreenBase):
             self.screen.get_size()
         )
 
-    def event_cacher(self):
+    def event_cacher(self) -> Any:
         """Handle clicks and keyboard input to return or save the score."""
         self._update_score_eligibility()
         for event in pygame.event.get():
@@ -69,19 +70,19 @@ class Lost_Game(ScreenBase):
                         self.player_name += event.unicode
         return True
 
-    def _update_score_eligibility(self):
+    def _update_score_eligibility(self) -> None:
         if self._checked_score != self.score:
             self.can_add_score = is_high_score(self.score)
             self._checked_score = self.score
 
-    def change_screen(self):
+    def change_screen(self) -> Any:
         """Process the pending state change for the defeat screen."""
         target = self.consume_pending_state()
         if target is not None:
             return target
         return None
 
-    def change_color_title(self):
+    def change_color_title(self) -> None:
         """Highlight the option under the mouse cursor."""
         mouse_pos = pygame.mouse.get_pos()
 
@@ -100,7 +101,7 @@ class Lost_Game(ScreenBase):
             "Check top 10", True, check_color
         )
 
-    def render(self):
+    def render(self) -> None:
         """Draw the defeat screen and the name input field when needed."""
         self._update_score_eligibility()
         self.screen = pygame.display.get_surface()

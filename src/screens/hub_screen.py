@@ -1,6 +1,5 @@
 import pygame
 
-
 class Hubs:
     """
     Manage the in-game HUD shown below the maze.
@@ -9,7 +8,7 @@ class Hubs:
     updates the layout whenever the window size changes or the values change.
     """
 
-    def __init__(self, game_screen):
+    def __init__(self, game_screen) -> None:
         """
         Store the parent screen and initialize the HUD text and layout."""
         self.game_screen = game_screen
@@ -23,7 +22,7 @@ class Hubs:
         self.level_text = self.font.render("Level 1", True, (255, 255, 255))
         self._update_layout()
 
-    def _get_total_width(self):
+    def _get_total_width(self) -> int:
         """Return the total width of the HUD texts and their gaps."""
         texts = [self.score_text, self.lives_text, self.time_text,
                  self.level_text]
@@ -31,7 +30,7 @@ class Hubs:
             len(texts) - 1
         )
 
-    def _update_layout(self):
+    def _update_layout(self) -> None:
         """
         Recalculate the HUD positions so the three labels remain centered
         and readable on the current screen size.
@@ -56,7 +55,7 @@ class Hubs:
         current_x += self.time_text.get_width() + self.spacing
         self.level_rect = self.level_text.get_rect(midleft=(current_x, y))
 
-    def get_required_width(self):
+    def get_required_width(self) -> int:
         """
         Return the minimum horizontal space needed by the HUD.
 
@@ -68,7 +67,7 @@ class Hubs:
         )
         return self._get_total_width() + self.horizontal_padding * 2
 
-    def render(self):
+    def render(self) -> None:
         """
         Refresh the HUD values from the game state and draw them on screen.
         """

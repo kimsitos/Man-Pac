@@ -1,11 +1,12 @@
 from src.screens.screen_base import ScreenBase, ScreenState
+from typing import Any
 import pygame
 
 
 class Menu_Game(ScreenBase):
     """Pause screen with continue and return-to-menu actions."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Create the pause menu and its two main buttons."""
         super().__init__()
         self.state = ScreenState.MENU_GAME
@@ -24,7 +25,7 @@ class Menu_Game(ScreenBase):
             self.screen.get_size()
         )
 
-    def event_cacher(self):
+    def event_cacher(self) -> bool:
         """Handle clicks to continue the game or return to the menu."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -37,14 +38,14 @@ class Menu_Game(ScreenBase):
                         self.request_state_change(ScreenState.PLAY)
         return True
 
-    def change_screen(self):
+    def change_screen(self) -> Any:
         """Consume the pending transition after the player choice."""
         target = self.consume_pending_state()
         if target is not None:
             return target
         return None
 
-    def change_color_title(self):
+    def change_color_title(self) -> None:
         """Highlight the hovered option for visual feedback."""
         mouse_pos = pygame.mouse.get_pos()
 
@@ -55,7 +56,7 @@ class Menu_Game(ScreenBase):
             "Continue", self.continue_rect, (255, 255, 0), mouse_pos
         )
 
-    def render(self):
+    def render(self) -> None:
         """Draw the pause screen with its background and buttons."""
         self.screen = pygame.display.get_surface()
         self.clear_screen()

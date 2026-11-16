@@ -1,12 +1,13 @@
 from src.screens.screen_base import ScreenBase, ScreenState
 from src.screens.high_score import is_high_score, new_record, Player
+from typing import Any
 import pygame
 
 
 class Win_Game(ScreenBase):
     """Victory screen with score submission and return-to-menu actions."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the victory screen and its buttons."""
         super().__init__()
         self.state = ScreenState.WIN_GAME
@@ -37,7 +38,7 @@ class Win_Game(ScreenBase):
             self.screen.get_size()
         )
 
-    def event_cacher(self):
+    def event_cacher(self) -> Any:
         """Handle clicks and keyboard input to continue or save the score."""
         self._update_score_eligibility()
         for event in pygame.event.get():
@@ -70,19 +71,19 @@ class Win_Game(ScreenBase):
                         self.player_name += event.unicode
         return True
 
-    def _update_score_eligibility(self):
+    def _update_score_eligibility(self) -> None:
         if self._checked_score != self.score:
             self.can_add_score = is_high_score(self.score)
             self._checked_score = self.score
 
-    def change_screen(self):
+    def change_screen(self) -> Any:
         """Return the destination screen after the chosen action."""
         target = self.consume_pending_state()
         if target is not None:
             return target
         return None
 
-    def change_color_title(self):
+    def change_color_title(self) -> None:
         """Change the hovered text color for visual feedback."""
         mouse_pos = pygame.mouse.get_pos()
 
@@ -101,7 +102,7 @@ class Win_Game(ScreenBase):
             "Check top 10", True, check_color
         )
 
-    def render(self):
+    def render(self) -> None:
         """Draw the win screen, buttons, and player name input."""
         self._update_score_eligibility()
         self.screen = pygame.display.get_surface()

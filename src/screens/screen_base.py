@@ -19,7 +19,7 @@ class ScreenState(Enum):
 
 
 class ScreenBase(ABC):
-    def __init__(self):
+    def __init__(self) -> None:
         self.pending_state = None
 
     @abstractmethod
@@ -46,7 +46,7 @@ class ScreenBase(ABC):
         """
         ...
 
-    def request_state_change(self, next_state):
+    def request_state_change(self, next_state) -> None:
         """
         This function sends a request to the system to switch
           to another screen
@@ -54,7 +54,7 @@ class ScreenBase(ABC):
         if next_state is not None and self.pending_state is None:
             self.pending_state = next_state
 
-    def consume_pending_state(self):
+    def consume_pending_state(self) -> Any:
         """
         This function checks if there is a pending screen transition,
           returns it, and deletes it so that it is not executed twice.

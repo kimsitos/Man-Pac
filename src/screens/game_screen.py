@@ -4,6 +4,7 @@ from src.screens.hub_screen import Hubs
 from src.maze_class import Maze, cell_size
 from src.cheat_mode import Cheat_Mode
 from src.parse_config_file import Config
+from typing import Any
 import time
 from src import pygame
 import random
@@ -27,7 +28,7 @@ class GameScreen(ScreenBase):
         self.config = config
         self._apply_config(config)
 
-    def event_cacher(self):
+    def event_cacher(self) -> Any:
         """
         Processes keyboard events
         """
@@ -64,13 +65,12 @@ class GameScreen(ScreenBase):
         self.clear_screen()
         if self.state != ScreenState.PLAY:
             return None
-
         self.screen.blit(self._maze.get_screen())
         self.pac_gums.draw(self.screen)
         self.entitys.draw(self.screen)
         self.hubs.render()
 
-    def change_screen(self):
+    def change_screen(self) -> Any:
         if self.state == ScreenState.PLAY:
             return None
 
@@ -78,7 +78,7 @@ class GameScreen(ScreenBase):
         self.state = ScreenState.PLAY
         return next_state
 
-    def _resize_to_maze(self):
+    def _resize_to_maze(self) -> None:
         """Adjust the window to fit the maze, leaving room for the HUDv"""
         maze = self._maze.get_maze()
         maze_width = len(maze[0]) * cell_size
@@ -95,12 +95,12 @@ class GameScreen(ScreenBase):
         self.screen = pygame.display.get_surface()
         self.hubs._update_layout()
 
-    def new_game(self):
+    def new_game(self) -> None:
         self._maze = Maze(self.config.levels, self.config.seed)
         self.level = 1
         self._create_entitys()
 
-    def new_level(self):
+    def new_level(self) -> None:
         pygame.time.wait(200)
         try:
             self._maze.generate_new_maze()
@@ -131,7 +131,7 @@ class GameScreen(ScreenBase):
         except StopIteration:
             self.state = ScreenState.WIN_GAME
 
-    def _check_collides(self):
+    def _check_collides(self) -> None:
         self._ghost_colides()
 
         gumpac_detection = pygame.sprite.spritecollide(
@@ -152,7 +152,7 @@ class GameScreen(ScreenBase):
         if len(self.pac_gums) <= 0:
             self.new_level()
 
-    def _ghost_colides(self):
+    def _ghost_colides(self) -> None:
         ghost_detection = pygame.sprite.spritecollide(
             self.player, self.ghosts,
             False,
@@ -252,7 +252,7 @@ class GameScreen(ScreenBase):
 
         return pac_gums
 
-    def manage_time(self, time_max):
+    def manage_time(self, time_max) -> int:
         time_f = time.time()
 
         if time_f - self.start_time >= time_max:
@@ -265,7 +265,7 @@ class GameScreen(ScreenBase):
 
         return abs(int((time_f - self.start_time) - time_max))
 
-    def get_stats(self):
+    def get_stats(self) -> dict:
         time_f = self.manage_time(self.time_max)
         return {
             "score": self.player.get_score(),
