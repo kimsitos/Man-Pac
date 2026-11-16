@@ -28,6 +28,10 @@ class GameScreen(ScreenBase):
         self.config = config
         self._apply_config(config)
 
+    def start_timer(self) -> None:
+        """Start the game timer when gameplay begins."""
+        self.start_time = time.time()
+
     def event_cacher(self) -> Any:
         """
         Processes keyboard events
@@ -99,6 +103,7 @@ class GameScreen(ScreenBase):
         self._maze = Maze(self.config.levels, self.config.seed)
         self.level = 1
         self._create_entitys()
+        self.start_timer()
 
     def new_level(self) -> None:
         pygame.time.wait(200)
@@ -128,6 +133,7 @@ class GameScreen(ScreenBase):
                 ghost.return_to_start()
 
             self._resize_to_maze()
+            self.start_timer()
             self.state = ScreenState.PLAY
         except StopIteration:
             self.state = ScreenState.WIN_GAME
@@ -255,16 +261,18 @@ class GameScreen(ScreenBase):
 
     def manage_time(self, time_max) -> int:
         time_f = time.time()
+        elapsed = time_f - self.start_time
 
-        if time_f - self.start_time >= time_max:
+        if elapsed >= time_max:
             self.player.less_life()
             for entity in self.entitys:
                 entity.return_to_start()
             self.start_time = time.time()
             if self.player.is_dead():
                 self.state = ScreenState.LOST_GAME
+            return max(0, int(time_max))
 
-        return abs(int((time_f - self.start_time) - time_max))
+        return max(0, int(time_max - elapsed))
 
     def get_stats(self) -> dict:
         time_f = self.manage_time(self.time_max)
