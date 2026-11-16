@@ -28,6 +28,10 @@ class GameScreen(ScreenBase):
         self.config = config
         self._apply_config(config)
 
+    def start_timer(self) -> None:
+        """Start the game timer when gameplay begins."""
+        self.start_time = time.time()
+
     def event_cacher(self) -> Any:
         """
         Processes keyboard events
