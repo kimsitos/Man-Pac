@@ -24,6 +24,9 @@ class Win_Game(ScreenBase):
         self.Check_rect = self.Check_text.get_rect(center=(1050, 950))
         self.win_text = self.font.render("You Win!", True, (124, 252, 0))
         self.win_rect = self.win_text.get_rect(center=(600, 200))
+        self.score_text = self.lit.render(
+            f"Score: {self.score}", True, (255, 255, 0))
+        self.score_rect = self.score_text.get_rect(center=(600, 250))
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
         self.menu_rect = self.menu_text.get_rect(center=(600, 900))
         self.new_score_text = self.font.render(
@@ -102,6 +105,9 @@ class Win_Game(ScreenBase):
             "Check top 10", True, check_color
         )
 
+        self.score_text = self.lit.render(
+            f"Score: {self.score}", True, (255, 255, 0))
+
     def render(self) -> None:
         """Draw the win screen, buttons, and player name input."""
         self._update_score_eligibility()
@@ -112,6 +118,7 @@ class Win_Game(ScreenBase):
             self.screen.blit(self.background, (0, 0))
             self.change_color_title()
             self.screen.blit(self.win_text, self.win_rect)
+            self.screen.blit(self.score_text, self.score_rect)
             self.screen.blit(self.menu_text, self.menu_rect)
             self.screen.blit(self.Check_text, self.Check_rect)
 

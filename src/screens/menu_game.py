@@ -26,16 +26,22 @@ class Menu_Game(ScreenBase):
         )
 
     def event_cacher(self) -> Any:
-        """Handle clicks to continue the game or return to the menu."""
+        """Handle keyboard and mouse input for the pause menu."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
+            if (
+                event.type == pygame.KEYUP
+                and event.key == pygame.K_ESCAPE
+            ):
+                self.request_state_change(ScreenState.PLAY)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.state == ScreenState.MENU_GAME:
                     if self.menu_rect.collidepoint(event.pos):
                         self.request_state_change(ScreenState.MENU)
                     elif self.continue_rect.collidepoint(event.pos):
                         self.request_state_change(ScreenState.PLAY)
+
         return True
 
     def change_screen(self) -> Any:

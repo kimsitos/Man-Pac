@@ -2,6 +2,7 @@ import pygame
 from src.screens.screen_base import ScreenState
 from src.screens.menu import Menu
 from src.screens.menu_game import Menu_Game
+from src.screens.instructions_screen import InstructionsScreen
 from src.screens.game_screen import GameScreen
 from src.screens.high_score import High_score
 from src.screens.win_game import Win_Game
@@ -35,6 +36,7 @@ class GameScheduler:
             ScreenState.MENU_GAME.value: Menu_Game(),
             ScreenState.PLAY.value: self.game_screen,
             ScreenState.HIGH_SCORE.value: High_score(),
+            ScreenState.INSTRUCTIONS.value: InstructionsScreen(),
             ScreenState.LOST_GAME.value: Lost_Game(),
             ScreenState.WIN_GAME.value: Win_Game()
         }
@@ -69,6 +71,16 @@ class GameScheduler:
                 break
             next_state = screen.change_screen()
             if next_state is not None and next_state in self.screens:
+                if (
+                    next_state == ScreenState.MENU_GAME.value
+                    and self.current_state == ScreenState.PLAY.value
+                ):
+                    self.game_screen.pause_timer()
+                elif (
+                    next_state == ScreenState.PLAY.value
+                    and self.current_state == ScreenState.MENU_GAME.value
+                ):
+                    self.game_screen.resume_timer()
                 if next_state in {
                     ScreenState.WIN_GAME.value,
                     ScreenState.LOST_GAME.value,
