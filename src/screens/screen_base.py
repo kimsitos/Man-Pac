@@ -16,9 +16,11 @@ class ScreenState(Enum):
     LOST_GAME = "LOST_GAME"
     MENU_GAME = "MENU_GAME"
     HIGH_SCORE = "HIGH_SCORE"
+    INSTRUCTIONS = "INSTRUCTIONS"
 
 
 class ScreenBase(ABC):
+    """The father screen of all screens"""
     def __init__(self) -> None:
         self.pending_state = None
 

@@ -16,6 +16,7 @@ class GameScreen(ScreenBase):
     margin = 8
 
     def __init__(self, config: Config):
+        super().__init__()
         self.state = ScreenState.PLAY
         self.cheat = Cheat_Mode()
         self.font = pygame.font.Font(None, 50)
@@ -23,6 +24,7 @@ class GameScreen(ScreenBase):
         self.screen: pygame.Surface = pygame.display.get_surface()
         self.hubs = Hubs(self)
         self.start_time = time.time()
+        self.paused_at: float | None = None
         self.level = 1
         self._create_entitys()
         self.config = config
@@ -31,6 +33,18 @@ class GameScreen(ScreenBase):
     def start_timer(self) -> None:
         """Start the game timer when gameplay begins."""
         self.start_time = time.time()
+        self.paused_at = None
+
+    def pause_timer(self) -> None:
+        """Record when the game timer was paused."""
+        if self.paused_at is None:
+            self.paused_at = time.time()
+
+    def resume_timer(self) -> None:
+        """Exclude the pause duration from the game timer."""
+        if self.paused_at is not None:
+            self.start_time += time.time() - self.paused_at
+            self.paused_at = None
 
     def event_cacher(self) -> Any:
         """
@@ -40,20 +54,13 @@ class GameScreen(ScreenBase):
             if event.type == pygame.QUIT:
                 return False
             elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_ESCAPE:
+                    self.request_state_change(ScreenState.MENU_GAME)
                 if event.key == pygame.K_m and self.cheat.enable:
                     print("Level skipped")
                     for gumpac in self.pac_gums:
                         gumpac.kill()
             self.cheat.catch_cheat_keys(event)
-
-        keys = pygame.key.get_pressed()
-
-        if keys[pygame.K_ESCAPE]:
-            self.state = ScreenState.MENU_GAME
-        elif keys[pygame.K_1]:
-            self.state = ScreenState.WIN_GAME
-        elif keys[pygame.K_2]:
-            self.state = ScreenState.LOST_GAME
 
         self._check_collides()
         self.player.update(self._maze)
@@ -75,12 +82,11 @@ class GameScreen(ScreenBase):
         self.hubs.render()
 
     def change_screen(self) -> Any:
-        if self.state == ScreenState.PLAY:
-            return None
-
-        next_state = self.state.value
-        self.state = ScreenState.PLAY
-        return next_state
+        """Consume the pending screen transition."""
+        target = self.consume_pending_state()
+        if target is not None:
+            return target
+        return None
 
     def _resize_to_maze(self) -> None:
         """Adjust the window to fit the maze, leaving room for the HUDv"""
@@ -134,9 +140,8 @@ class GameScreen(ScreenBase):
 
             self._resize_to_maze()
             self.start_timer()
-            self.state = ScreenState.PLAY
         except StopIteration:
-            self.state = ScreenState.WIN_GAME
+            self.request_state_change(ScreenState.WIN_GAME)
 
     def _check_collides(self) -> None:
         self._ghost_colides()
@@ -183,7 +188,7 @@ class GameScreen(ScreenBase):
                             continue
                         entity.make_inedible()
                     if self.player.is_dead():
-                        self.state = ScreenState.LOST_GAME
+                        self.request_state_change(ScreenState.LOST_GAME)
 
     def _apply_config(self, config: Config) -> None:
         random.seed(config.seed)
@@ -260,6 +265,10 @@ class GameScreen(ScreenBase):
         return pac_gums
 
     def manage_time(self, time_max) -> int:
+        if self.paused_at is not None:
+            elapsed = self.paused_at - self.start_time
+            return max(0, int(time_max - elapsed))
+
         time_f = time.time()
         elapsed = time_f - self.start_time
 
@@ -269,7 +278,7 @@ class GameScreen(ScreenBase):
                 entity.return_to_start()
             self.start_time = time.time()
             if self.player.is_dead():
-                self.state = ScreenState.LOST_GAME
+                self.request_state_change(ScreenState.LOST_GAME)
             return max(0, int(time_max))
 
         return max(0, int(time_max - elapsed))
