@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field, ValidationError
 import sys
+from typing import cast
 
 
 class Level(BaseModel):
@@ -20,7 +21,7 @@ class Config(BaseModel):
 
 
 def parse_config_file(file: str = "config.json") -> Config:
-    config = None
+    config: Config | None = None
     try:
         with open(file, 'r') as fd:
             final_str = ""
@@ -30,7 +31,7 @@ def parse_config_file(file: str = "config.json") -> Config:
                     continue
                 final_str += line
 
-            config = Config.model_validate_json(final_str)
+            config = cast(Config, Config.model_validate_json(final_str))
     except PermissionError as e:
         print("\033[91mPermission Error:\033[0m", e)
     except FileNotFoundError as e:

@@ -1,6 +1,10 @@
 import pygame
 from typing import Any
-from src.screens.screen_base import ScreenBase, ScreenState
+from src.screens.screen_base import (
+    ScreenBase,
+    ScreenState,
+    get_display_surface,
+)
 
 TEXT = """                                         PAC-MAN - HOW TO PLAY
 ________________________________________________________________
@@ -29,7 +33,7 @@ class InstructionsScreen(ScreenBase):
     def __init__(self) -> None:
         super().__init__()
         self.state = ScreenState.INSTRUCTIONS
-        self.screen = pygame.display.get_surface()
+        self.screen = get_display_surface()
         self.font = pygame.font.Font(None, 100)
         self.small_font = pygame.font.Font(None, 40)
         self.ins_text = self.small_font.render(
@@ -38,7 +42,7 @@ class InstructionsScreen(ScreenBase):
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
         self.menu_rect = self.menu_text.get_rect(center=(600, 950))
 
-    def event_cacher(self) -> None:
+    def event_cacher(self) -> bool:
         """Handle clicks to continue the game or return to the menu."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -50,7 +54,7 @@ class InstructionsScreen(ScreenBase):
 
         return True
 
-    def change_screen(self) -> Any:
+    def change_screen(self) -> str | None:
         """Consume the pending transition after the player choice."""
         target = self.consume_pending_state()
         if target is not None:
@@ -66,7 +70,7 @@ class InstructionsScreen(ScreenBase):
         )
 
     def render(self) -> None:
-        self.screen = pygame.display.get_surface()
+        self.screen = get_display_surface()
         self.clear_screen()
 
         if self.state == ScreenState.INSTRUCTIONS:

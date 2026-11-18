@@ -19,13 +19,22 @@ class ScreenState(Enum):
     INSTRUCTIONS = "INSTRUCTIONS"
 
 
+def get_display_surface() -> pygame.Surface:
+    screen = pygame.display.get_surface()
+    if screen is None:
+        raise RuntimeError("The Pygame display has not been initialized")
+    return screen
+
+
 class ScreenBase(ABC):
     """The father screen of all screens"""
     def __init__(self) -> None:
-        self.pending_state = None
+        self.pending_state: ScreenState | str | None = None
+        self.font: pygame.font.Font = pygame.font.Font(None, 50)
+        self.screen = get_display_surface()
 
     @abstractmethod
-    def event_cacher(self) -> None:
+    def event_cacher(self) -> Any:
         """
         This forces each screen to implement its own event handling, because
           each one reacts differently.
@@ -33,7 +42,7 @@ class ScreenBase(ABC):
         ...
 
     @abstractmethod
-    def change_screen(self) -> str:
+    def change_screen(self) -> str | None:
         """
         This forces each screen to implement how it decides whether to move to
           another screen, because each one has its own logic: menu, game, etc.
@@ -48,7 +57,7 @@ class ScreenBase(ABC):
         """
         ...
 
-    def request_state_change(self, next_state) -> None:
+    def request_state_change(self, next_state: ScreenState | str | None) -> None:
         """
         This function sends a request to the system to switch
           to another screen
@@ -56,7 +65,7 @@ class ScreenBase(ABC):
         if next_state is not None and self.pending_state is None:
             self.pending_state = next_state
 
-    def consume_pending_state(self) -> Any:
+    def consume_pending_state(self) -> str | None:
         """
         This function checks if there is a pending screen transition,
           returns it, and deletes it so that it is not executed twice.
@@ -73,7 +82,7 @@ class ScreenBase(ABC):
         It takes the current screen again and paints it black to clear the
           previous frame before drawing the next screen.
         """
-        self.screen = pygame.display.get_surface()
+        self.screen = get_display_surface()
         self.screen.fill("black")
 
     def render_title(

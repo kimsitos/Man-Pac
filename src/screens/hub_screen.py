@@ -1,4 +1,9 @@
 import pygame
+from typing import TYPE_CHECKING, cast
+from src.screens.screen_base import get_display_surface
+
+if TYPE_CHECKING:
+    from src.screens.game_screen import GameScreen
 
 
 class Hubs:
@@ -10,11 +15,11 @@ class Hubs:
     updates the layout whenever the window size changes or the values change.
     """
 
-    def __init__(self, game_screen) -> None:
+    def __init__(self, game_screen: "GameScreen") -> None:
         """
         Store the parent screen and initialize the HUD text and layout."""
         self.game_screen = game_screen
-        self.screen = pygame.display.get_surface()
+        self.screen = get_display_surface()
         self.font = pygame.font.Font(None, 50)
         self.spacing = 70
         self.horizontal_padding = 25
@@ -28,7 +33,7 @@ class Hubs:
         """Return the total width of the HUD texts and their gaps."""
         texts = [self.score_text, self.lives_text, self.time_text,
                  self.level_text]
-        return sum(text.get_width() for text in texts) + self.spacing * (
+        return sum(cast(int, text.get_width()) for text in texts) + self.spacing * (
             len(texts) - 1
         )
 
@@ -37,9 +42,10 @@ class Hubs:
         Recalculate the HUD positions so the three labels remain centered
         and readable on the current screen size.
         """
-        self.screen = pygame.display.get_surface()
-        if self.screen is None:
+        screen = pygame.display.get_surface()
+        if screen is None:
             return
+        self.screen = screen
 
         total_width = self._get_total_width()
         start_x = max(

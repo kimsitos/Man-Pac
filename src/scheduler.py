@@ -10,6 +10,7 @@ from src.screens.lost_game import Lost_Game
 from src.parse_config_file import parse_config_file
 
 import sys
+from typing import cast
 
 
 class GameScheduler:
@@ -21,7 +22,7 @@ class GameScheduler:
         self.default_screen_size = (1200, 1000)
         pygame.display.set_mode(self.default_screen_size)
         self.current_state = ScreenState.MENU.value
-        self.previous_state = None
+        self.previous_state: str | None = None
 
         try:
             self.game_screen: GameScreen = GameScreen(
@@ -85,7 +86,11 @@ class GameScheduler:
                     ScreenState.WIN_GAME.value,
                     ScreenState.LOST_GAME.value,
                 }:
-                    self.screens[next_state].score = (
+                    result_screen = cast(
+                        Win_Game | Lost_Game,
+                        self.screens[next_state],
+                    )
+                    result_screen.score = (
                         self.game_screen.player.get_score()
                     )
                 if (

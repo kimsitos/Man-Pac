@@ -4,7 +4,11 @@ from pathlib import Path
 import json
 import pygame
 
-from src.screens.screen_base import ScreenBase, ScreenState
+from src.screens.screen_base import (
+    ScreenBase,
+    ScreenState,
+    get_display_surface,
+)
 
 
 class Player(BaseModel):
@@ -25,7 +29,7 @@ class High_score(ScreenBase):
         self.title_font = pygame.font.Font(None, 80)
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
         self.menu_rect = self.menu_text.get_rect(center=(1200 // 2, 950))
-        self.screen = pygame.display.get_surface()
+        self.screen = get_display_surface()
         background = pygame.image.load(
             "assets/sprites/background_high_score.jpg"
         ).convert()
@@ -107,7 +111,7 @@ class High_score(ScreenBase):
 
     def render(self) -> None:
         """Draw the background, leaderboard, and return button."""
-        self.screen = pygame.display.get_surface()
+        self.screen = get_display_surface()
         self.clear_screen()
 
         if self.state == ScreenState.HIGH_SCORE:
