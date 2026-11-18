@@ -32,7 +32,8 @@ class InstructionsScreen(ScreenBase):
         self.screen = pygame.display.get_surface()
         self.font = pygame.font.Font(None, 100)
         self.small_font = pygame.font.Font(None, 40)
-        self.ins_text = self.small_font.render(f"{TEXT}", True, (255, 255, 255))
+        self.ins_text = self.small_font.render(
+            f"{TEXT}", True, (255, 255, 255))
         self.ins_rect = self.ins_text.get_rect(center=(1200 // 2, 500))
         self.menu_text = self.font.render("Menu", True, (255, 255, 255))
         self.menu_rect = self.menu_text.get_rect(center=(600, 950))

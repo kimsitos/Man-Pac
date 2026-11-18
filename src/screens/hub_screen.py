@@ -3,7 +3,7 @@ import pygame
 
 class Hubs:
     """
-    
+
     Manage the in-game HUD shown below the maze.
 
     This class keeps the score, lives, and timer aligned in a single row and
