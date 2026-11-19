@@ -39,6 +39,7 @@ class Entity(ABC, pygame.sprite.Sprite):
         self._direction: Direction = self._wanted_dir
 
     def set_new_start_coord(self, new_start_coord: tuple[int, int]) -> None:
+        """make the start coord be new one"""
         x, y = new_start_coord
         if x < 0 or y < 0:
             raise ValueError("Position can't be negative")

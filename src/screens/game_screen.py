@@ -106,12 +106,14 @@ class GameScreen(ScreenBase):
         self.hubs._update_layout()
 
     def new_game(self) -> None:
+        """Greate a new game, from the ground"""
         self._maze = Maze(self.config.levels, self.config.seed)
         self.level = 1
         self._create_entitys()
         self.start_timer()
 
     def new_level(self) -> None:
+        """Create a new level for the game"""
         pygame.time.wait(200)
         try:
 
@@ -144,6 +146,7 @@ class GameScreen(ScreenBase):
             self.request_state_change(ScreenState.WIN_GAME)
 
     def _check_collides(self) -> None:
+        """Checks all the colides in the game"""
         self._ghost_colides()
 
         gumpac_detection = pygame.sprite.spritecollide(
@@ -165,6 +168,7 @@ class GameScreen(ScreenBase):
             self.new_level()
 
     def _ghost_colides(self) -> None:
+        """check collisions with ghosts, applying their distinctive effects"""
         ghost_detection = pygame.sprite.spritecollide(
             self.player, self.ghosts,
             False,
@@ -191,6 +195,13 @@ class GameScreen(ScreenBase):
                         self.request_state_change(ScreenState.LOST_GAME)
 
     def _apply_config(self, config: Config) -> None:
+        """applies the config class to all variables 
+
+        Parameters
+        ----------
+        config : Config
+            game configuration class
+        """
         random.seed(config.seed)
         self.time_max = config.level_max_time
         PacMan.lives = config.lives
@@ -200,6 +211,8 @@ class GameScreen(ScreenBase):
 
     # Creation of Game Objects
     def _create_entitys(self) -> None:
+        """Creates all the entitys necesary for the game
+        """
         self.entitys: pygame.sprite.Group = pygame.sprite.Group()
         maze = self._maze.get_maze()
 
@@ -220,6 +233,18 @@ class GameScreen(ScreenBase):
 
     @staticmethod
     def _create_ghosts(maze: list[list[int]]) -> pygame.sprite.Group:
+        """Create a ghost identity in each corner of the maze
+
+        Parameters
+        ----------
+        maze : list[list[int]]
+            2d map of the maze
+
+        Returns
+        -------
+        pygame.sprite.Group
+            Group of sprites with a ghost in each corner of the maze
+        """
         ghosts_pos = [
             (0 * cell_size, 0 * cell_size),
             (0 * cell_size, ((len(maze[0]) - 1) * cell_size)),
@@ -237,6 +262,18 @@ class GameScreen(ScreenBase):
 
     @staticmethod
     def _create_pacgums(maze: list[list[int]]) -> pygame.sprite.Group:
+        """create the pacgums, including normal and super
+
+        Parameters
+        ----------
+        maze : list[list[int]]
+            2d map of the maze
+
+        Returns
+        -------
+        pygame.sprite.Group
+           Group of sprites with a pacgum in each cell
+        """
         super_gumpac_pos = [
             (0, 0),
             (0, ((len(maze[0]) - 1))),

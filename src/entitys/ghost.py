@@ -26,6 +26,15 @@ class Ghost(Entity):
         self.return_path: list[Direction] = []
 
     def update(self, maze: Maze, dist_map: list[list[int]]) -> None:
+        """Updates the direction the sprite moves
+        based on the state of the ghost
+
+        Parameters
+        ----------
+        maze : Maze
+            Maze grid. Each cell is a 4-bit mask (from 0 to 15)
+            where each bit represents a wall
+        """
         if (maze.is_centered_in_cell(self.get_coord())
                 and not self.is_returning_to_base()):
             self._wanted_dir = random.choice(
