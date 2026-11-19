@@ -102,6 +102,19 @@ class Maze:
         return bool((cell & self._mask_walls[direction]) != 0)
 
     def dist_map(self, start: tuple[int, int]) -> list[list[int]]:
+        """Build a minimum-distance map from a starting pixel position
+
+        Parameters
+        ----------
+        start : tuple[int, int]
+            start point in pixels (row, col)
+
+        Returns
+        -------
+        list[list[int]]
+            2D grid of shortest step distances from the starting cell to each
+            cell in the maze.
+        """
         x, y = start
         distance, _ = self._explore((y // cell_size, x // cell_size))
         return distance
@@ -111,6 +124,21 @@ class Maze:
         start: tuple[int, int],
         end: tuple[int, int]
     ) -> list[tuple[int, int]]:
+        """Generate the shortest path from the start coordinate
+        inside the maze to the end
+
+        Parameters
+        ----------
+        start : tuple[int, int]
+            pixel position on the maze
+        end : tuple[int, int]
+            pixel position on the maze
+
+        Returns
+        -------
+        list[tuple[int, int]]
+            tuple list of the cells to go through to get to the end
+        """
 
         psx, psy = start
         pex, pey = end
@@ -141,6 +169,18 @@ class Maze:
         self,
         cell_pos: tuple[int, int]
     ) -> list[tuple[int, int]]:
+        """returns neighboring cells that are connected
+
+        Parameters
+        ----------
+        cell_pos : tuple[int, int]
+            cell you want to get your neighbors
+
+        Returns
+        -------
+        list[tuple[int, int]]
+            neighbor cells that are connected
+        """
 
         row, col = cell_pos
 
@@ -163,6 +203,27 @@ class Maze:
     def _explore(self, start: tuple[int, int]
                  ) -> tuple[list[list[int]],
                             list[list[tuple[int, int] | None]]]:
+        """Compute shortest distances and predecessors from a starting cell.
+
+        Traverses the maze returned using a min-heap priority
+        queue (Dijkstra's algorithm) with unit step cost between neighboring
+        cells.
+
+        Parameters
+        ----------
+        start : tuple[int, int]
+            (row, column) coordinates of the starting cell.
+
+        Returns
+        -------
+        tuple[list[list[int]], list[list[tuple[int, int] | None]]]
+            `(distance, previous)`` tuple where:
+            - ``distance`` is a 2D integer grid of shortest path lengths from
+              ``start`` (``sys.maxsize`` if unreachable).
+            - ``previous`` is a 2D grid holding the ``(row, column)``
+              predecessor cell along the shortest path, or ``None`` if unset.
+        """
+
         maze = self.get_maze()
         rows = len(maze)
         cols = len(maze[0])
@@ -202,6 +263,19 @@ class Maze:
 
     @staticmethod
     def _get_new_level(levels: list[Level]) -> Iterator[tuple[int, int]]:
+        """Yield dimensions for each level from a list of level objects
+
+        Parameters
+        ----------
+        levels : list[Level]
+            list of Level class, where where the width and
+            height of the level are saved
+
+        Yields
+        ------
+        Iterator[tuple[int, int]]
+           Tuple (width, height) representing each level's dimensions
+        """
         for level in levels:
             yield (level.width, level.height)
 

@@ -18,6 +18,14 @@ class Cheat_Mode:
             print("I - Activate/Deactivate invencibility")
 
     def catch_cheat_keys(self, event: pygame.event.Event) -> None:
+        """
+        process the events for the cheat modes
+
+        Parameters
+        ----------
+        event : pygame.event.Event
+            Pygame event to inspect for cheat key releases
+        """
         if not self.enable:
             return
         if event.type == pygame.KEYUP:

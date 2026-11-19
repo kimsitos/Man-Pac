@@ -14,7 +14,14 @@ class PacMan(Entity):
         super().__init__(start_coord, sprite_path)
 
     def update(self, maze: Maze) -> None:
+        """Updates the direction the sprite moves
 
+        Parameters
+        ----------
+        maze : Maze
+            Maze grid. Each cell is a 4-bit mask (from 0 to 15)
+            where each bit represents a wall
+        """
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_w] or keys[pygame.K_UP]:
@@ -29,23 +36,58 @@ class PacMan(Entity):
         super().update(maze)
 
     def set_score(self, points: int) -> None:
+        """adds the point value to the total score
+
+        Parameters
+        ----------
+        points : int
+            point value to add
+        """
         if points <= 0:
             return
         self.score += points
 
     def get_score(self) -> int:
+        """Return the actual score
+
+        Returns
+        -------
+        int
+            actual score
+        """
         return self.score
 
     def is_dead(self) -> bool:
+        """Checks if man_pac is dead
+
+        Returns
+        -------
+        bool
+            True if manpac is dead. False otherwise
+        """
         if self.lives <= 0:
             return True
         return False
 
     def less_life(self) -> bool:
+        """Reduce by 1 the lives that man_pac has
+
+        Returns
+        -------
+        bool
+            True if manpac is dead. False otherwise
+        """
         if self.is_dead():
             return True
         self.lives -= 1
         return False
 
     def get_lives(self) -> int:
+        """Return the lives that man_pac has
+
+        Returns
+        -------
+        int
+            lives that man_pac has
+        """
         return self.lives
