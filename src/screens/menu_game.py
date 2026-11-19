@@ -1,4 +1,8 @@
-from src.screens.screen_base import ScreenBase, ScreenState
+from src.screens.screen_base import (
+    ScreenBase,
+    ScreenState,
+    get_display_surface,
+)
 from typing import Any
 import pygame
 
@@ -16,7 +20,7 @@ class Menu_Game(ScreenBase):
         self.continue_text = self.font.render(
             "Continue", True, (255, 255, 255))
         self.continue_rect = self.continue_text.get_rect(center=(600, 600))
-        self.screen = pygame.display.get_surface()
+        self.screen = get_display_surface()
         background = pygame.image.load(
             "assets/sprites/background_high_score.jpg"
         ).convert()
@@ -64,7 +68,7 @@ class Menu_Game(ScreenBase):
 
     def render(self) -> None:
         """Draw the pause screen with its background and buttons."""
-        self.screen = pygame.display.get_surface()
+        self.screen = get_display_surface()
         self.clear_screen()
 
         if self.state == ScreenState.MENU_GAME:

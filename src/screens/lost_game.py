@@ -1,4 +1,8 @@
-from src.screens.screen_base import ScreenBase, ScreenState
+from src.screens.screen_base import (
+    ScreenBase,
+    ScreenState,
+    get_display_surface,
+)
 from src.screens.high_score import is_high_score, new_record, Player
 from typing import Any
 import pygame
@@ -30,7 +34,7 @@ class Lost_Game(ScreenBase):
         self.new_score_text = self.font.render(
             "New Score", True, (255, 255, 255))
         self.new_score_rect = self.new_score_text.get_rect(center=(600, 800))
-        self.screen = pygame.display.get_surface()
+        self.screen = get_display_surface()
         background = pygame.image.load(
             "assets/sprites/background_lost_game.jpg"
         ).convert()
@@ -109,7 +113,7 @@ class Lost_Game(ScreenBase):
     def render(self) -> None:
         """Draw the defeat screen and the name input field when needed."""
         self._update_score_eligibility()
-        self.screen = pygame.display.get_surface()
+        self.screen = get_display_surface()
         self.clear_screen()
 
         if self.state == ScreenState.LOST_GAME:

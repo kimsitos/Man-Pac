@@ -1,5 +1,9 @@
 from src.entitys import PacMan, Ghost, Gumpac, SuperGumpac
-from src.screens.screen_base import ScreenBase, ScreenState
+from src.screens.screen_base import (
+    ScreenBase,
+    ScreenState,
+    get_display_surface,
+)
 from src.screens.hub_screen import Hubs
 from src.maze_class import Maze, cell_size
 from src.cheat_mode import Cheat_Mode
@@ -21,7 +25,7 @@ class GameScreen(ScreenBase):
         self.cheat = Cheat_Mode()
         self.font = pygame.font.Font(None, 50)
         self._maze = Maze(config.levels, config.seed)
-        self.screen: pygame.Surface = pygame.display.get_surface()
+        self.screen = get_display_surface()
         self.hubs = Hubs(self)
         self.start_time = time.time()
         self.paused_at: float | None = None
@@ -98,11 +102,11 @@ class GameScreen(ScreenBase):
         min_height = maze_height + 160
 
         new_size = (max(min_width, 500), max(min_height, 500))
-        current_size = pygame.display.get_surface().get_size()
+        current_size = get_display_surface().get_size()
         if current_size != new_size:
             pygame.display.set_mode(new_size)
 
-        self.screen = pygame.display.get_surface()
+        self.screen = get_display_surface()
         self.hubs._update_layout()
 
     def new_game(self) -> None:
@@ -301,7 +305,7 @@ class GameScreen(ScreenBase):
 
         return pac_gums
 
-    def manage_time(self, time_max) -> int:
+    def manage_time(self, time_max: int) -> int:
         if self.paused_at is not None:
             elapsed = self.paused_at - self.start_time
             return max(0, int(time_max - elapsed))
@@ -320,7 +324,7 @@ class GameScreen(ScreenBase):
 
         return max(0, int(time_max - elapsed))
 
-    def get_stats(self) -> dict:
+    def get_stats(self) -> dict[str, int]:
         time_f = self.manage_time(self.time_max)
         return {
             "score": self.player.get_score(),

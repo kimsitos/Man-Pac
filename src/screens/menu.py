@@ -1,6 +1,10 @@
 import pygame
 from typing import Any
-from src.screens.screen_base import ScreenBase, ScreenState
+from src.screens.screen_base import (
+    ScreenBase,
+    ScreenState,
+    get_display_surface,
+)
 
 
 class Menu(ScreenBase):
@@ -10,7 +14,7 @@ class Menu(ScreenBase):
         """Initialize the menu background and button positions."""
         super().__init__()
         self.state = ScreenState.MENU
-        self.screen = pygame.display.get_surface()
+        self.screen = get_display_surface()
         self.font = pygame.font.Font(None, 100)
         self.play_text = self.font.render("PLAY", True, (255, 255, 255))
         self.play_rect = self.play_text.get_rect(center=(1200 // 2, 400))
@@ -72,7 +76,7 @@ class Menu(ScreenBase):
 
     def render(self) -> None:
         """Draw the background and menu text each frame."""
-        self.screen = pygame.display.get_surface()
+        self.screen = get_display_surface()
         self.clear_screen()
 
         if self.state == ScreenState.MENU:
