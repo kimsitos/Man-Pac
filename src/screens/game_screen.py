@@ -199,7 +199,7 @@ class GameScreen(ScreenBase):
                         self.request_state_change(ScreenState.LOST_GAME)
 
     def _apply_config(self, config: Config) -> None:
-        """applies the config class to all variables 
+        """applies the config class to all variables
 
         Parameters
         ----------
