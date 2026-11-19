@@ -4,6 +4,18 @@ import sys
 
 
 def load_sprite(path: str) -> pygame.Surface:
+    """Load and scale a sprite image from disk
+
+    Parameters
+    ----------
+    path : str
+        File path to the sprite image to load
+
+    Returns
+    -------
+    pygame.Surface
+        Pygame surface containing the scaled sprite
+    """
     try:
         image = pygame.image.load(path)
         return pygame.transform.scale(

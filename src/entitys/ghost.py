@@ -61,7 +61,36 @@ class Ghost(Entity):
         super().update(maze)
 
     def next_move(self, maze: Maze, dist_map: list[list[int]]) -> Direction:
+        """processes the information from the dist_map to
+        take the direction depending on the state you are in
+
+        Parameters
+        ----------
+        maze : Maze
+            Maze grid. Each cell is a 4-bit mask (from 0 to 15)
+            where each bit represents a wall
+        dist_map : list[list[int]]
+            2D grid of shortest step distances from the starting cell to each
+            cell in the maze.
+
+        Returns
+        -------
+        Direction
+            Direction where the ghost moves
+        """
         def dist(cell: tuple[int, int]) -> int:
+            """Return the dist value of a cell
+
+            Parameters
+            ----------
+            cell : tuple[int, int]
+                cell on the 2d map
+
+            Returns
+            -------
+            int
+                dist value
+            """
             return dist_map[cell[0]][cell[1]]
 
         x, y = self.get_coord()
@@ -78,30 +107,67 @@ class Ghost(Entity):
         return self._path_to_directions([(row, col), object_cell])[0]
 
     def is_eatable(self) -> bool:
+        """Return whether the ghost is currently in the eatable state
+
+        Returns
+        -------
+        bool
+            True if the state is EATABLE. False otherwise
+        """
         return self.state == State.EATEABLE
 
     def is_returning_to_base(self) -> bool:
+        """Return whether the ghost is currently in the return_to_base state
+
+        Returns
+        -------
+        bool
+            True if the state is RETURN_TO_BASE. False otherwise
+        """
         return self.state == State.RETURN_TO_BASE
 
     def make_eatable(self) -> None:
+        """It makes the ghost edible, along with its characteristics"""
         self._start_eatable = pygame.time.get_ticks()
         self.image = self._original_image.copy()
         self.image.fill((255, 0, 0), special_flags=pygame.BLEND_RGBA_MULT)
         self.state = State.EATEABLE
 
     def make_inedible(self) -> None:
+        """It makes the ghost inedible, along with its characteristics"""
         self.state = State.NONEATABLE
         self.image = self._original_image.copy()
 
     def get_point(self) -> int:
+        """returns its score value
+
+        Returns
+        -------
+        int
+            score value
+        """
         return self.point_value
 
     def make_return_to_base(self) -> None:
+        """It makes the ghost return_to_base, along with its characteristics"""
         self.state = State.RETURN_TO_BASE
         self.image = self._original_image.copy()
         self.image.fill((100, 50, 255), special_flags=pygame.BLEND_RGBA_MULT)
 
     def _set_return_path(self, maze: Maze) -> list[Direction]:
+        """Return a list of directions to the base of the ghost
+
+        Parameters
+        ----------
+        maze : Maze
+            Maze grid. Each cell is a 4-bit mask (from 0 to 15)
+            where each bit represents a wall
+
+        Returns
+        -------
+        list[Direction]
+            List of Directions that the ghost must follow to return to the bse
+        """
         y, x = self.start_coord
         path = maze.shortest_path(
             self.get_coord(),
@@ -111,6 +177,18 @@ class Ghost(Entity):
 
     @staticmethod
     def _path_to_directions(path: list[tuple[int, int]]) -> list[Direction]:
+        """transforms a list of neighboring cells into a list of Directions
+
+        Parameters
+        ----------
+        path : list[tuple[int, int]]
+            list of neighboring cells to travel to reach x point
+
+        Returns
+        -------
+        list[Direction]
+            list of Directions to go to reach x point
+        """
         directions = []
         direction_map = {
             (-1, 0): Direction.NORTH,
