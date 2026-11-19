@@ -33,7 +33,8 @@ class Hubs:
         """Return the total width of the HUD texts and their gaps."""
         texts = [self.score_text, self.lives_text, self.time_text,
                  self.level_text]
-        return sum(cast(int, text.get_width()) for text in texts) + self.spacing * (
+        return sum(cast(int, text.get_width())
+                   for text in texts) + self.spacing * (
             len(texts) - 1
         )
 

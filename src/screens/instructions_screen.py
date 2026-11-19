@@ -1,5 +1,4 @@
 import pygame
-from typing import Any
 from src.screens.screen_base import (
     ScreenBase,
     ScreenState,

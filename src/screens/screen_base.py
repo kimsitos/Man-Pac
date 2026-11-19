@@ -57,7 +57,9 @@ class ScreenBase(ABC):
         """
         ...
 
-    def request_state_change(self, next_state: ScreenState | str | None) -> None:
+    def request_state_change(
+        self,
+            next_state: ScreenState | str | None) -> None:
         """
         This function sends a request to the system to switch
           to another screen
