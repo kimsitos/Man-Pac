@@ -65,6 +65,7 @@ class Win_Game(ScreenBase):
                         self.writing_name = True
             if self.writing_name:
                 if event.type == pygame.KEYDOWN:
+                    character = event.unicode
                     if event.key == pygame.K_RETURN:
                         new_record(
                             Player(name=self.player_name, scored=self.score)
@@ -74,7 +75,7 @@ class Win_Game(ScreenBase):
                         self.writing_name = False
                     elif event.key == pygame.K_BACKSPACE:
                         self.player_name = self.player_name[:-1]
-                    elif len(self.player_name) < 10:
+                    elif len(self.player_name) < 10 and (character.isalnum() or character == " "):
                         self.player_name += event.unicode
         return True
 
