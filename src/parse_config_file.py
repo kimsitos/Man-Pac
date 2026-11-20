@@ -9,7 +9,7 @@ class Level(BaseModel):
 
 
 class Config(BaseModel):
-    lives: int = Field(gt=0)
+    lives: int = Field(gt=0, default=3)
     seed: int = Field(default=0)
     level_max_time: int = Field(gt=0, default=90)
     points_per_pacgum: int = Field(gt=0, default=10)
